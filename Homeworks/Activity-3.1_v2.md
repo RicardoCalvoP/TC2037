@@ -115,10 +115,18 @@ For example: $ba$, $bbaaa$ and $bbaaaa$ belong to this set.
     If $x$ has length $n+1$, then $x = wa$
 
     $(x^R)^R$
-    $= ((wa)^R)^R$ // Substitute x for wa
-    $= (((w)^R)a)^R$ // Defition of concatenation
-    $= (w^Ra)^R$ // Definition of reversal
-    $= ((w^R)^R)a$ // Definition of concatenation
-    $= (w)a$ // Inductive hypotesis
-    $= wa$ // Definition of concatenation
-    $= x$ // Substitute wa for x
+    $= ((wa)^R)^R$ 
+
+    $(aw^R)^R$
+
+    Renombramos $w^R$ 
+
+    $z = w^R$
+
+    $(az)^R$
+
+    $z^Ra$
+    
+    Sustituimos $z$ con su nombre original
+    
+    $(w^R)^Ra$
