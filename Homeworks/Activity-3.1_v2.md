@@ -5,7 +5,6 @@ https://www.overleaf.com/learn/latex/List_of_Greek_letters_and_math_symbols
 
 ## Names:
 - Ricardo Alfredo Calvo - A01028889
-- Pedro Mauri Mtz - A01029143
 
 ## Exercises:
 
@@ -59,7 +58,7 @@ For example: $ba$, $bbaaa$ and $bbaaaa$ belong to this set.
 
     Basis: $i = 0$
     
-    Recursive Step: if $u \in L$ then $uba,ubaa,uab,uaba,uaab \in L$
+    Recursive Step: if $u \in L$ then $bua, buaa \in L$
 
     Closure: A string $u \in L$ only if it can be obtained from the basis following a finite set of applications of the recursive step.
 
@@ -79,16 +78,12 @@ For example: $ba$, $bbaaa$ and $bbaaaa$ belong to this set.
 
     a. List the elements in the sets $L_0, L_1, L_2$
 
-    $L_0={"ab"}$
+    $L_0={"b"}$
 
-    $L_1={"baba", "abba", "abab", "abb"}$
+    $L_1={"bb", "bab", "bba"}$
    
-    $L_2={"babba", "abbba", "abbab", 
-            "abbb", "bababa", "ababba",
-            "ababab", "ababb", "babbaa",
-            "abbaba","abbaab", "abbab", 
-            "bbabaa", "bababa", "babaab",     
-            "babab"}$
+    $L_2={bbb,bbab,bbba,babb,babab,babba,bbaba
+    ,bbab,bbaab,bbaba,bbbab,bbbaa}$
 
     b. Is the string $bbaaba$ in $L$? If so, trace how it is produced.
     If not, explain why not.
