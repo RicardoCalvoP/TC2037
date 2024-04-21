@@ -9,6 +9,26 @@ defmodule Hw.Ariel2 do
   defp do_invert([], res), do: res
   defp do_invert([head | tail], res), do: do_invert(tail, [head | res])
 
+  # 1. The function insert takes two inputs, one number n and a list lst that contains numbers in ascendent order
+  # Return a list with the same elements of lst but with n inserted in its corresponding place
+
+  def insert(lst, n), do: do_insert(n, lst, [])
+
+  defp do_print_insert(res), do: Enum.reverse(res)
+  defp do_insert(n, [], res), do: Enum.reverse([n | res])
+
+  defp do_insert(n, lst, res) when n < hd(lst),
+    do: do_print_insert(Enum.reverse(lst) ++ [n | res])
+
+  defp do_insert(n, [head | tail], res), do: do_insert(n, tail, [head | res])
+
+  # The function insertion-sort takes a list of unordered numbers as an input and returns a new list with
+  # the same elements but in ascendent order. We should use the insert function defined before to write the
+  # insertion-sort.
+
+  def insertion_sort([]), do: []
+  def insertion_sort([head | tail]), do: insert(insertion_sort(tail), head)
+
   # 3. The rotate-left function takes two inputs: an integer n and a list list. It returns the list
   # that results from rotating list a total of n elements to the left. If n is negative,
   # it rotates to the right.

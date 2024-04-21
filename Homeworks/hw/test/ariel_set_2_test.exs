@@ -10,19 +10,19 @@ defmodule Hw.Ariel2Test do
 
   # Functions
 
-  # test "test insert" do
-  #  assert Ariel2.insert([], 14) == [14]
-  #  assert Ariel2.insert([5, 6, 7, 8], 4) == [4, 5, 6, 7, 8]
-  #  assert Ariel2.insert([1, 3, 6, 7, 9, 16], 5) == [1, 3, 5, 6, 7, 9, 16]
-  #  assert Ariel2.insert([1, 5, 6], 10) == [1, 5, 6, 10]
-  # end
+  test "test insert" do
+    assert Ariel2.insert([], 14) == [14]
+    assert Ariel2.insert([5, 6, 7, 8], 4) == [4, 5, 6, 7, 8]
+    assert Ariel2.insert([1, 3, 6, 7, 9, 16], 5) == [1, 3, 5, 6, 7, 9, 16]
+    assert Ariel2.insert([1, 5, 6], 10) == [1, 5, 6, 10]
+  end
 
-  # test "test insertion_sort" do
-  #  assert Ariel2.insertion_sort([]) == []
-  #  assert Ariel2.insertion_sort([4, 3, 6, 8, 3, 0, 9, 1, 7]) == [0, 1, 3, 3, 4, 6, 7, 8, 9]
-  #  assert Ariel2.insertion_sort([1, 2, 3, 4, 5, 6]) == [1, 2, 3, 4, 5, 6]
-  #  assert Ariel2.insertion_sort([5, 5, 5, 1, 5, 5, 5]) == [1, 5, 5, 5, 5, 5, 5]
-  # end
+  test "test insertion_sort" do
+    assert Ariel2.insertion_sort([]) == []
+    assert Ariel2.insertion_sort([4, 3, 6, 8, 3, 0, 9, 1, 7]) == [0, 1, 3, 3, 4, 6, 7, 8, 9]
+    assert Ariel2.insertion_sort([1, 2, 3, 4, 5, 6]) == [1, 2, 3, 4, 5, 6]
+    assert Ariel2.insertion_sort([5, 5, 5, 1, 5, 5, 5]) == [1, 5, 5, 5, 5, 5, 5]
+  end
 
   test "test rotate_left" do
     assert Ariel2.rotate_left([], 5) == []
