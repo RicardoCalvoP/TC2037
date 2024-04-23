@@ -1,7 +1,7 @@
 defmodule ParsingTestTokenList do
   use ExUnit.Case
-  alias Parsing.TokenList
-  doctest Parsing.TokenList
+  alias Hw.TokenList
+  doctest Hw.TokenList
 
   describe "basic tokens" do
     # Comment the describetag line to run this set of tests
