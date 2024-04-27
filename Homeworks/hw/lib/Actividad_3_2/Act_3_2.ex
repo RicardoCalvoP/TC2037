@@ -9,26 +9,42 @@ defmodule Hw.TokenList do
     |> String.graphemes()
     |> eval_dfa(
       {&Hw.TokenList.delta_valid_number/2, [:int, :float, :exp, :var, :close_par], :start},
+      [],
       []
     )
   end
 
-  def eval_dfa([], {_delta, accept, state}, tokens) do
+  def eval_dfa([], {_delta, accept, state}, tokens, entity) do
     # binding() |> IO.inspect()
 
     cond do
-      Enum.member?(accept, state) -> Enum.reverse([state | tokens])
-      true -> false
+      Enum.member?(accept, state) ->
+        rev_entyty = Enum.reverse(entity)
+
+        string_entity = Enum.join(rev_entyty)
+        Enum.reverse([{state, string_entity} | tokens])
+
+      true ->
+        false
     end
   end
 
-  def eval_dfa([char | tail], {delta, accept, state}, tokens) do
+  def eval_dfa([char | tail], {delta, accept, state}, tokens, entity) do
     # binding() |> IO.inspect()
     [new_state, found] = delta.(state, char)
 
     cond do
-      found -> eval_dfa(tail, {delta, accept, new_state}, [found | tokens])
-      true -> eval_dfa(tail, {delta, accept, new_state}, tokens)
+      found ->
+        rev_entyty = Enum.reverse(entity)
+
+        string_entity = Enum.join(rev_entyty)
+        eval_dfa(tail, {delta, accept, new_state}, [{found, string_entity} | tokens], [char])
+
+      char == " " ->
+        eval_dfa(tail, {delta, accept, new_state}, tokens, entity)
+
+      true ->
+        eval_dfa(tail, {delta, accept, new_state}, tokens, [char | entity])
     end
   end
 
@@ -41,6 +57,7 @@ defmodule Hw.TokenList do
           is_var(char) -> [:var, false]
           is_sign(char) -> [:sign, false]
           is_digit(char) -> [:int, false]
+          is_space(char) -> [:start, false]
           char === "(" -> [:open, false]
           true -> [:fail, false]
         end
@@ -50,6 +67,7 @@ defmodule Hw.TokenList do
           is_var(char) -> [:var, false]
           is_digit(char) -> [:var, false]
           is_operator(char) -> [:op, :var]
+          is_space(char) -> [:space, :var]
           char === "=" -> [:asign, :var]
           true -> [:fail, false]
         end
@@ -59,12 +77,14 @@ defmodule Hw.TokenList do
           is_var(char) -> [:var, :asign]
           is_digit(char) -> [:int, :asign]
           is_sign(char) -> [:sign, :asign]
+          is_space(char) -> [:asign, false]
           true -> [:fail, false]
         end
 
       :sign ->
         cond do
           is_digit(char) -> [:int, false]
+          is_space(char) -> [:sign, false]
           true -> [:fail, false]
         end
 
@@ -73,6 +93,7 @@ defmodule Hw.TokenList do
           is_var(char) -> [:var, :op]
           is_digit(char) -> [:int, :op]
           is_sign(char) -> [:sign, :op]
+          is_space(char) -> [:space_op, :op]
           char === "(" -> [:open, :op]
           true -> [:fail, false]
         end
@@ -82,6 +103,7 @@ defmodule Hw.TokenList do
           is_digit(char) -> [:int, false]
           is_power(char) -> [:pow, false]
           is_operator(char) -> [:op, :int]
+          is_space(char) -> [:space, :int]
           char === ")" -> [:close_par, :int]
           char === "." -> [:dot, false]
           true -> [:fail, false]
@@ -98,6 +120,7 @@ defmodule Hw.TokenList do
           is_digit(char) -> [:float, false]
           is_operator(char) -> [:op, :float]
           is_power(char) -> [:pow, false]
+          is_space(char) -> [:space, :float]
           char === ")" -> [:close_par, false]
           true -> [:fail, false]
         end
@@ -119,6 +142,7 @@ defmodule Hw.TokenList do
         cond do
           is_digit(char) -> [:exp, false]
           is_operator(char) -> [:op, :exp]
+          is_space(char) -> [:space, :exp]
           char === ")" -> [:close_par, :exp]
           true -> [:fail, false]
         end
@@ -134,6 +158,20 @@ defmodule Hw.TokenList do
       :close_par ->
         cond do
           is_operator(char) -> [:op, :close_par]
+          true -> [:fail, false]
+        end
+
+      :space ->
+        cond do
+          is_operator(char) -> [:op, false]
+          true -> [:fail, false]
+        end
+
+      :space_op ->
+        cond do
+          is_var(char) -> [:var, false]
+          is_digit(char) -> [:int, false]
+          is_sign(char) -> [:sign, false]
           true -> [:fail, false]
         end
 
@@ -170,5 +208,9 @@ defmodule Hw.TokenList do
 
   def is_power(char) do
     Enum.member?(["E", "e"], char)
+  end
+
+  def is_space(char) do
+    Enum.member?([" "], char)
   end
 end
