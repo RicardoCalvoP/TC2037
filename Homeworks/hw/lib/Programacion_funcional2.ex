@@ -41,13 +41,13 @@ defmodule Hw.Ariel2 do
   defp(do_rotate_left(list, 0), do: list)
 
   defp do_rotate_left([head | tail], n) when n > 0 do
-    do_rotate_left(tail ++ [head], n - 1)
+    do_rotate_left([tail | head], n - 1)
   end
 
   defp do_rotate_left(list, n) when n < 0 do
     head = Enum.take(list, -1)
     tail = Enum.drop(list, -1)
-    do_rotate_left(head ++ tail, n + 1)
+    do_rotate_left([head | tail], n + 1)
   end
 
   # 4. The prime-factors function takes an integer n as input (n > 0) and returns a list containing
