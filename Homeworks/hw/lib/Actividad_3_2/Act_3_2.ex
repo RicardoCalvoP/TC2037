@@ -19,9 +19,9 @@ defmodule Hw.TokenList do
 
     cond do
       Enum.member?(accept, state) ->
-        rev_entyty = Enum.reverse(entity)
+        rev_entity = Enum.reverse(entity)
 
-        string_entity = Enum.join(rev_entyty)
+        string_entity = Enum.join(rev_entity)
         Enum.reverse([{state, string_entity} | tokens])
 
       true ->
@@ -35,9 +35,9 @@ defmodule Hw.TokenList do
 
     cond do
       found ->
-        rev_entyty = Enum.reverse(entity)
+        rev_entity = Enum.reverse(entity)
 
-        string_entity = Enum.join(rev_entyty)
+        string_entity = Enum.join(rev_entity)
         eval_dfa(tail, {delta, accept, new_state}, [{found, string_entity} | tokens], [char])
 
       char == " " ->
