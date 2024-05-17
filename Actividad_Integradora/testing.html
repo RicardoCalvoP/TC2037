@@ -1,10 +1,1096 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resultados</title>
 </head>
+
 <body>
+
+  <span id="comment"># Ricardo Calvo Perez</span>
+  <span id="comment"># 05/2024</span>
+
+  <span id="comment"># This code is for elixir</span>
+
+  <span id="reserved_word">defmodule</span> <span id="module">Project</span> <span id="reserved_word">do</span>
+  <span id="comment"># -----------------------</span>
+  <span id="comment"># Main Function</span>
+  <span id="comment"># -----------------------</span>
+
+  <span id="reserved_word">def</span> <span id="function">convert_file</span><span id="container">(</span><span
+    id="variable">file</span><span id="container">)</span> <span id="reserved_word">do</span>
+  <span id="comment"># Create a new name based on the called file but changed extensions from .ex to .html</span>
+  <span id="variable">html_file</span> <span id="operator">=</span> <span id="module">String</span><span
+    id="operator">.</span><span id="function">replace</span><span id="container">(</span><span
+    id="variable">file</span><span id="operator">,</span> <span id="regular_expression">~r/\.\w+$/</span><span
+    id="operator">,</span> <span id="string">".html"</span><span id="container">)</span>
+  <span id="comment"># Create & Write top html file</span>
+  <span id="function">write_html_start</span><span id="container">(</span><span id="string">"testing.html"</span><span
+    id="container">)</span>
+
+  <span id="function">read_file</span><span id="container">(</span><span id="variable">file</span><span
+    id="operator">,</span> <span id="variable">html_file</span><span id="container">)</span>
+
+  <span id="comment"># Write closure tags and close file</span>
+  <span id="function">write_html_end</span><span id="container">(</span><span id="string">"testing.html"</span><span
+    id="container">)</span>
+  <span id="comment"># File.close(html_file)</span>
+  <span id="reserved_word">end</span>
+
+  <span id="comment"># -----------------------</span>
+  <span id="comment"># File functions</span>
+  <span id="comment"># -----------------------</span>
+
+  <span id="comment"># Function yo call to read the calling file line by line</span>
+  <span id="reserved_word">def</span> <span id="function">read_file</span><span id="container">(</span><span
+    id="variable">file</span><span id="operator">,</span> <span id="variable">html_file</span><span
+    id="container">)</span> <span id="reserved_word">do</span>
+  <span id="variable">lines</span> <span id="operator">=</span> <span id="module">File</span><span
+    id="operator">.</span><span id="function">stream!</span><span id="container">(</span><span
+    id="variable">file</span><span id="container">)</span>
+
+  <span id="module">Enum</span><span id="operator">.</span><span id="function">map</span><span
+    id="container">(</span><span id="variable">lines</span><span id="operator">,</span> <span
+    id="operator">&</span><span id="function">find_coincidences</span><span id="container">(</span><span
+    id="operator">&</span><span id="number">1</span><span id="container">)</span><span id="container">)</span>
+  <span id="comment"># Check elements for future results</span>
+  <span id="comment"># Save results in list of tuples</span>
+  <span id="comment"># write_results(html_file, results)</span>
+  <span id="reserved_word">end</span>
+
+  <span id="comment"># Main function to put together all of the html doc with results</span>
+  <span id="reserved_word">def</span> <span id="function">write_results</span><span id="container">(</span><span
+    id="variable">html_file</span><span id="operator">,</span> <span id="variable">results</span><span
+    id="container">)</span> <span id="reserved_word">do</span>
+  <span id="variable">results</span> <span id="operator">=</span> <span id="module">Enum</span><span
+    id="operator">.</span><span id="function">reverse</span><span id="container">(</span><span
+    id="variable">results</span><span id="container">)</span>
+
+  <span id="variable">formatted_results</span> <span id="operator">=</span>
+  <span id="module">Enum</span><span id="operator">.</span><span id="function">reduce</span><span
+    id="container">(</span><span id="variable">results</span><span id="operator">,</span> <span
+    id="string">""</span><span id="operator">,</span> <span id="variable">fn</span> <span id="container">[</span><span
+    id="variable">token</span><span id="operator">,</span> <span id="variable">value</span><span
+    id="container">]</span><span id="operator">,</span> <span id="variable">acc</span> <span id="operator">-</span><span
+    id="operator">></span>
+  <span id="variable">if</span> <span id="variable">token</span> <span id="operator">=</span><span
+    id="operator">=</span> <span id="string">"space"</span> <span id="reserved_word">do</span>
+  <span id="variable">acc</span> <span id="operator">
+    << /span><span id="operator">></span> <span id="string">" "</span>
+      <span id="variable">else</span>
+      <span id="variable">acc</span> <span id="operator">
+        << /span><span id="operator">></span> <span id="string">"<span id=\"#{token}\">#{value}</span>"</span>
+          <span id="reserved_word">end</span>
+          <span id="reserved_word">end</span><span id="container">)</span>
+
+          <span id="variable">results_string</span> <span id="operator">=</span> <span id="string">"\n"</span> <span
+            id="operator">
+            << /span><span id="operator">></span> <span id="variable">formatted_results</span>
+
+              <span id="module">File</span><span id="operator">.</span><span id="function">write!</span><span
+                id="container">(</span><span id="variable">html_file</span><span id="operator">,</span> <span
+                id="variable">results_string</span><span id="operator">,</span> <span id="container">[</span><span
+                id="atom">:append</span><span id="container">]</span><span id="container">)</span>
+              <span id="reserved_word">end</span>
+
+              <span id="comment"># Function to write the beginning of html structure</span>
+              <span id="reserved_word">def</span> <span id="function">write_html_start</span><span
+                id="container">(</span><span id="variable">file</span><span id="container">)</span> <span
+                id="reserved_word">do</span>
+              <span id="module">File</span><span id="operator">.</span><span id="function">write!</span><span
+                id="container">(</span><span id="variable">file</span><span id="operator">,</span> <span
+                id="string">"""</span>
+              <span id="operator">
+                << /span><span id="module">DOCTYPE</span> <span id="variable">html</span><span id="operator">></span>
+                  <span id="operator">
+                    << /span><span id="variable">html</span> <span id="variable">lang</span><span
+                        id="operator">=</span><span id="string">"en"</span><span id="operator">></span>
+                      <span id="operator">
+                        << /span><span id="variable">head</span><span id="operator">></span>
+                          <span id="operator">
+                            << /span><span id="variable">meta</span> <span id="variable">charset</span><span
+                                id="operator">=</span><span id="string">"UTF-8"</span><span id="operator">></span>
+                              <span id="operator">
+                                << /span><span id="variable">meta</span> <span id="variable">name</span><span
+                                    id="operator">=</span><span id="string">"viewport" content="width=device-width,
+                                    initial-scale=1.0"</span><span id="operator">></span>
+                                  <span id="operator">
+                                    << /span><span id="variable">title</span><span id="operator">></span><span
+                                        id="module">Resultados</span><span id="operator">
+                                        << /span><span id="operator">/</span><span id="variable">title</span><span
+                                            id="operator">></span>
+                                          <span id="operator">
+                                            << /span><span id="operator">/</span><span id="variable">head</span><span
+                                                id="operator">></span>
+                                              <span id="operator">
+                                                << /span><span id="variable">body</span><span id="operator">></span>
+                                                  <span id="string">"""</span><span id="container">)</span>
+                                                  <span id="reserved_word">end</span>
+
+                                                  <span id="comment"># Function to write closure tags of html
+                                                    structure</span>
+                                                  <span id="reserved_word">def</span> <span
+                                                    id="function">write_html_end</span><span
+                                                    id="container">(</span><span id="variable">file_name</span><span
+                                                    id="container">)</span> <span id="reserved_word">do</span>
+                                                  <span id="module">File</span><span id="operator">.</span><span
+                                                    id="function">write!</span><span id="container">(</span>
+                                                  <span id="variable">file_name</span><span id="operator">,</span>
+                                                  <span id="string">"""</span>
+                                                  <span id="operator">
+                                                    << /span><span id="operator">/</span><span
+                                                        id="variable">body</span><span id="operator">></span>
+                                                      <span id="operator">
+                                                        << /span><span id="operator">/</span><span
+                                                            id="variable">html</span><span id="operator">></span>
+                                                          <span id="string">"""</span><span id="operator">,</span>
+                                                          <span id="container">[</span><span
+                                                            id="atom">:append</span><span id="container">]</span>
+                                                          <span id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment"># --------------------------------</span>
+                                                          <span id="comment"># Finding coincidences Functions</span>
+                                                          <span id="comment"># --------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">find_coincidences</span><span
+                                                            id="container">(</span><span id="variable">line</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">]</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="variable">line</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment"># -----------------------</span>
+                                                          <span id="comment"># Defining rule Functions</span>
+                                                          <span id="comment"># -----------------------</span>
+
+                                                          <span id="comment"># variable "coincidence" is going to be
+                                                            equal to the function Regex.run()</span>
+                                                          <span id="comment"># this function only searches for the first
+                                                            element that matches with the</span>
+                                                          <span id="comment"># regular expression, in case of matching
+                                                            is going to be storage in</span>
+                                                          <span id="comment"># a list like this ["coincidence"]</span>
+
+                                                          <span id="comment"># in case of no having a match coincidence
+                                                            value is going to be nil</span>
+
+                                                          <span id="comment"># if there is coincidences with the regular
+                                                            expression</span>
+                                                          <span id="comment"># we save a list of two instances [:token,
+                                                            coincidence]</span>
+                                                          <span id="comment"># this list is going to be saved in a list
+                                                            of lists called results</span>
+
+                                                          <span id="comment"># else if the string (line) is empty, is
+                                                            going to print the results</span>
+                                                          <span id="comment"># in the html file</span>
+
+                                                          <span id="comment"># else if there si no coincidences, it is
+                                                            going to skip to the next category</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Reserved word Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^(defmodule|def|defp|do|end|false|true|cond|case)/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"reserved_word"</span><span
+                                                            id="operator">,</span> <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_func</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Function Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_func</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^[a-z]\w*(\!+)?(?=\()/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"function"</span><span id="operator">,</span>
+                                                          <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_variable</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Variable Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_variable</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^[a-z]\w*/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"variable"</span><span id="operator">,</span>
+                                                          <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_comment</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Comment Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_comment</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^\#.*/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"comment"</span><span id="operator">,</span>
+                                                          <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_module</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Module Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_module</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^[A-Z]\w*/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"module"</span><span id="operator">,</span>
+                                                          <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_string</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># String Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_string</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^\".*\"/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"string"</span><span id="operator">,</span>
+                                                          <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_number</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Number Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_number</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^\d+(\.\d+)?/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"number"</span><span id="operator">,</span>
+                                                          <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_operator</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Operator Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_operator</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^(\+|\-|\*|\/|\=|\==|\===|\!=|\.|\,|\|>|\->|\&|\
+                                                            <|\>|\<>)/</span><span id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"operator"</span><span id="operator">,</span>
+                                                          <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_atoms</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Atom Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_atoms</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^\:\w+/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span id="string">"atom"</span><span
+                                                            id="operator">,</span> <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_container</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Container Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_container</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^[\(\)\{\}\[\]]/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"container"</span><span id="operator">,</span>
+                                                          <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_regular_expression</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Regular Expression Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_regular_expression</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^\~r.+\//</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span
+                                                            id="string">"regular_expression"</span><span
+                                                            id="operator">,</span> <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="function">is_space</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="comment"># Space Function</span>
+                                                          <span id="comment">#
+                                                            --------------------------------------------------------------------------------------------</span>
+                                                          <span id="reserved_word">def</span> <span
+                                                            id="function">is_space</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="variable">results</span><span
+                                                            id="container">)</span> <span id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">=</span> <span id="module">Regex</span><span
+                                                            id="operator">.</span><span id="function">run</span><span
+                                                            id="container">(</span><span
+                                                            id="regular_expression">~r/^\s/</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">string</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">cond</span> <span
+                                                            id="reserved_word">do</span>
+                                                          <span id="variable">coincidence</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">results</span> <span
+                                                            id="operator">=</span> <span id="container">[</span><span
+                                                            id="container">[</span><span id="string">"space"</span><span
+                                                            id="operator">,</span> <span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">]</span> <span
+                                                            id="variable">results</span><span id="container">]</span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="module">String</span><span
+                                                            id="operator">.</span><span id="function">length</span><span
+                                                            id="container">(</span><span id="function">hd</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">coincidence</span><span
+                                                            id="container">)</span><span id="container">)</span><span
+                                                            id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="variable">string</span> <span
+                                                            id="operator">=</span><span id="operator">=</span> <span
+                                                            id="string">""</span> <span id="operator">-</span><span
+                                                            id="operator">></span>
+                                                          <span id="function">write_results</span><span
+                                                            id="container">(</span><span
+                                                            id="string">"testing.html"</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+
+                                                          <span id="reserved_word">true</span> <span
+                                                            id="operator">-</span><span id="operator">></span>
+                                                          <span id="variable">new_string</span> <span
+                                                            id="operator">=</span> <span id="module">String</span><span
+                                                            id="operator">.</span><span
+                                                            id="function">split_at</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span>
+                                                          <span id="function">is_reserved_word</span><span
+                                                            id="container">(</span><span id="function">elem</span><span
+                                                            id="container">(</span><span
+                                                            id="variable">new_string</span><span id="operator">,</span>
+                                                          <span id="number">1</span><span id="container">)</span><span
+                                                            id="operator">,</span> <span
+                                                            id="variable">results</span><span id="container">)</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
+                                                          <span id="reserved_word">end</span>
 </body>
+
 </html>
