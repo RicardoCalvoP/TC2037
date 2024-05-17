@@ -12,12 +12,12 @@ defmodule Project do
     # Create a new name based on the called file but changed extensions from .ex to .html
     html_file = String.replace(file, ~r/\.\w+$/, ".html")
     # Create & Write top html file
-    write_html_start("testing.html")
+    write_html_start(html_file)
 
     read_file(file, html_file)
 
     # Write closure tags and close file
-    write_html_end("testing.html")
+    write_html_end(html_file)
     # File.close(html_file)
   end
 
@@ -29,10 +29,7 @@ defmodule Project do
   def read_file(file, html_file) do
     lines = File.stream!(file)
 
-    Enum.map(lines, &find_coincidences(&1))
-    # Check elements for future results
-    # Save results in list of tuples
-    # write_results(html_file, results)
+    Enum.map(lines, &find_coincidences(&1, html_file))
   end
 
   # Main function to put together  all of the html doc with results
@@ -44,7 +41,7 @@ defmodule Project do
         if token == "space" do
           acc <> " "
         else
-          acc <> "<span id=\"#{token}\">#{value}</span>"
+          acc <> "<span class=\"#{token}\">#{value}</span>"
         end
       end)
 
@@ -54,24 +51,27 @@ defmodule Project do
   end
 
   # Function to write the beginning of html structure
-  def write_html_start(file) do
-    File.write!(file, """
+  def write_html_start(html_file) do
+    File.write!(html_file, """
     <!DOCTYPE html>
     <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="style.css">
       <title>Resultados</title>
     </head>
     <body>
+    <pre>
     """)
   end
 
   # Function to write closure tags of html structure
-  def write_html_end(file_name) do
+  def write_html_end(html_file) do
     File.write!(
-      file_name,
+      html_file,
       """
+      </pre>
       </body>
       </html>
       """,
@@ -83,9 +83,9 @@ defmodule Project do
   # Finding coincidences  Functions
   # --------------------------------
 
-  def find_coincidences(line) do
+  def find_coincidences(line, html_file) do
     results = []
-    is_reserved_word(line, results)
+    is_reserved_word(line, results, html_file)
   end
 
   # -----------------------
@@ -112,20 +112,20 @@ defmodule Project do
   # Reserved word Function
   # --------------------------------------------------------------------------------------------
 
-  def is_reserved_word(string, results) do
-    coincidence = Regex.run(~r/^(defmodule|def|defp|do|end|false|true|cond|case)/, string)
+  def is_reserved_word(string, results, html_file) do
+    coincidence = Regex.run(~r/^(defmodule|defp|def|do|end|false|true|cond|case|if|else)/, string)
 
     cond do
       coincidence ->
         results = [["reserved_word", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_func(string, results)
+        is_func(string, results, html_file)
     end
   end
 
@@ -133,20 +133,20 @@ defmodule Project do
   # Function Function
   # --------------------------------------------------------------------------------------------
 
-  def is_func(string, results) do
+  def is_func(string, results, html_file) do
     coincidence = Regex.run(~r/^[a-z]\w*(\!+)?(?=\()/, string)
 
     cond do
       coincidence ->
         results = [["function", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_variable(string, results)
+        is_variable(string, results, html_file)
     end
   end
 
@@ -154,20 +154,20 @@ defmodule Project do
   # Variable Function
   # --------------------------------------------------------------------------------------------
 
-  def is_variable(string, results) do
+  def is_variable(string, results, html_file) do
     coincidence = Regex.run(~r/^[a-z]\w*/, string)
 
     cond do
       coincidence ->
         results = [["variable", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_comment(string, results)
+        is_comment(string, results, html_file)
     end
   end
 
@@ -175,20 +175,20 @@ defmodule Project do
   # Comment Function
   # --------------------------------------------------------------------------------------------
 
-  def is_comment(string, results) do
+  def is_comment(string, results, html_file) do
     coincidence = Regex.run(~r/^\#.*/, string)
 
     cond do
       coincidence ->
         results = [["comment", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_module(string, results)
+        is_module(string, results, html_file)
     end
   end
 
@@ -196,20 +196,20 @@ defmodule Project do
   # Module Function
   # --------------------------------------------------------------------------------------------
 
-  def is_module(string, results) do
+  def is_module(string, results, html_file) do
     coincidence = Regex.run(~r/^[A-Z]\w*/, string)
 
     cond do
       coincidence ->
         results = [["module", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_string(string, results)
+        is_string(string, results, html_file)
     end
   end
 
@@ -217,20 +217,20 @@ defmodule Project do
   # String Function
   # --------------------------------------------------------------------------------------------
 
-  def is_string(string, results) do
+  def is_string(string, results, html_file) do
     coincidence = Regex.run(~r/^\".*\"/, string)
 
     cond do
       coincidence ->
         results = [["string", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_number(string, results)
+        is_number(string, results, html_file)
     end
   end
 
@@ -238,20 +238,20 @@ defmodule Project do
   # Number Function
   # --------------------------------------------------------------------------------------------
 
-  def is_number(string, results) do
+  def is_number(string, results, html_file) do
     coincidence = Regex.run(~r/^\d+(\.\d+)?/, string)
 
     cond do
       coincidence ->
         results = [["number", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_operator(string, results)
+        is_operator(string, results, html_file)
     end
   end
 
@@ -259,20 +259,29 @@ defmodule Project do
   # Operator Function
   # --------------------------------------------------------------------------------------------
 
-  def is_operator(string, results) do
-    coincidence = Regex.run(~r/^(\+|\-|\*|\/|\=|\==|\===|\!=|\.|\,|\|>|\->|\&|\<|\>|\<>)/, string)
+  def is_operator(string, results, html_file) do
+    coincidence =
+      Regex.run(~r/^(\+|\-|\*|\/|\=|\==|\===|\!=|\.|\,|\|>|\->|\&|\<>|\<|\>)/, string)
 
     cond do
       coincidence ->
-        results = [["operator", hd(coincidence)] | results]
+        formatted_coincidence =
+          case hd(coincidence) do
+            "<" -> "&lt;"
+            ">" -> "&gt;"
+            "&" -> "&amp;"
+            other -> other
+          end
+
+        results = [["operator", formatted_coincidence] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_atoms(string, results)
+        is_atoms(string, results, html_file)
     end
   end
 
@@ -280,20 +289,20 @@ defmodule Project do
   # Atom Function
   # --------------------------------------------------------------------------------------------
 
-  def is_atoms(string, results) do
+  def is_atoms(string, results, html_file) do
     coincidence = Regex.run(~r/^\:\w+/, string)
 
     cond do
       coincidence ->
         results = [["atom", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_container(string, results)
+        is_container(string, results, html_file)
     end
   end
 
@@ -301,20 +310,20 @@ defmodule Project do
   # Container  Function
   # --------------------------------------------------------------------------------------------
 
-  def is_container(string, results) do
+  def is_container(string, results, html_file) do
     coincidence = Regex.run(~r/^[\(\)\{\}\[\]]/, string)
 
     cond do
       coincidence ->
         results = [["container", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_regular_expression(string, results)
+        is_regular_expression(string, results, html_file)
     end
   end
 
@@ -322,41 +331,41 @@ defmodule Project do
   # Regular Expression Function
   # --------------------------------------------------------------------------------------------
 
-  def is_regular_expression(string, results) do
+  def is_regular_expression(string, results, html_file) do
     coincidence = Regex.run(~r/^\~r.+\//, string)
 
     cond do
       coincidence ->
         results = [["regular_expression", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
-        is_space(string, results)
+        is_space(string, results, html_file)
     end
   end
 
   # --------------------------------------------------------------------------------------------
   # Space Function
   # --------------------------------------------------------------------------------------------
-  def is_space(string, results) do
+  def is_space(string, results, html_file) do
     coincidence = Regex.run(~r/^\s/, string)
 
     cond do
       coincidence ->
         results = [["space", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
 
       string == "" ->
-        write_results("testing.html", results)
+        write_results(html_file, results)
 
       true ->
         new_string = String.split_at(string, 1)
-        is_reserved_word(elem(new_string, 1), results)
+        is_reserved_word(elem(new_string, 1), results, html_file)
     end
   end
 end
