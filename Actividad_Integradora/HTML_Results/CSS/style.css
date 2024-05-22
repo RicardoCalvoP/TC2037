@@ -25,6 +25,10 @@ body {
     color: rgb(57, 163, 128);
 }
 
+.attribute {
+    color: blueviolet;
+}
+
 .string {
     color: rgb(184, 66, 23);
 }

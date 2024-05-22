@@ -51,8 +51,7 @@ Based on the elixir language the used categories are:
 
 ## _Code reasoning_
 
-To use this code correctly you'll need to move the your elixir file to the same direction. Call the function "convert_file"  this way 
-`Project.convert_file("file_name.ex")` or `Project.convert_file("file_name.exs")`
+To use this code correctly you'll need to move the your elixir file to the same direction. For organization purposes you'll need to move you to read file to the folder called "ToReadElixirFiles", but when calling the function DO NOT write the folder direction, the program all ready knows here to find your file, call the function "convert_file"  this way `Project.convert_file("file_name.ex")` or `Project.convert_file("file_name.exs")`. If you followed the previews steps you'll find in your terminal an ":ok" message, and you can find your new html file in the "HTML_Results" folder.
 
 What this does it that it will create a new html file based on the name of the file your are sending, then it will write the opening structure of HTML architecture, then it'll read line by line the code elixir code you sent. 
 

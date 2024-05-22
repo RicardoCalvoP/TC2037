@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="CSS/style.css">
   <title>Resultados</title>
 </head>
 
@@ -21,11 +21,20 @@
   <span class="comment"># Main Function</span> 
   <span class="comment"># -----------------------</span> 
  
-  <span class="reserved_word">def</span> <span class="function">convert_file</span><span class="container">(</span><span class="variable">file</span><span class="container">)</span> <span class="reserved_word">do</span> 
+  <span class="reserved_word">def</span> <span class="function">convert_file</span><span class="container">(</span><span class="variable">input_file</span><span class="container">)</span> <span class="reserved_word">do</span> 
+    <span class="comment"># Folder where html results will save</span> 
+    <span class="variable">html_address</span> <span class="operator">=</span> <span class="string">"HTML_Results/"</span> 
     <span class="comment"># Create a new name based on the called file but changed extensions from .ex to .html</span> 
-    <span class="variable">html_file</span> <span class="operator">=</span> <span class="module">String</span><span class="operator">.</span><span class="function">replace</span><span class="container">(</span><span class="variable">file</span><span class="operator">,</span> <span class="regular_expression">~r/\.\w+$/</span><span class="operator">,</span> <span class="string">".html"</span><span class="container">)</span> 
+    <span class="variable">html_file_name</span> <span class="operator">=</span> <span class="module">String</span><span class="operator">.</span><span class="function">replace</span><span class="container">(</span><span class="variable">input_file</span><span class="operator">,</span> <span class="regular_expression">~r/\.\w+$/</span><span class="operator">,</span> <span class="string">".html"</span><span class="container">)</span> 
+    <span class="comment"># Adds hole address to the file</span> 
+    <span class="variable">html_file</span> <span class="operator">=</span> <span class="variable">html_address</span> <span class="operator"><></span> <span class="variable">html_file_name</span> 
     <span class="comment"># Create & Write top html file</span> 
     <span class="function">write_html_start</span><span class="container">(</span><span class="variable">html_file</span><span class="container">)</span> 
+ 
+    <span class="comment"># Folder where needs to be the elixir to read file</span> 
+    <span class="variable">input_file_folder</span> <span class="operator">=</span> <span class="string">"ToReadElixirFiles/"</span> 
+    <span class="comment"># Concatenates hole address</span> 
+    <span class="variable">file</span> <span class="operator">=</span> <span class="variable">input_file_folder</span> <span class="operator"><></span> <span class="variable">input_file</span> 
  
     <span class="function">read_file</span><span class="container">(</span><span class="variable">file</span><span class="operator">,</span> <span class="variable">html_file</span><span class="container">)</span> 
  
@@ -43,9 +52,6 @@
     <span class="variable">lines</span> <span class="operator">=</span> <span class="module">File</span><span class="operator">.</span><span class="function">stream!</span><span class="container">(</span><span class="variable">file</span><span class="container">)</span> 
  
     <span class="module">Enum</span><span class="operator">.</span><span class="function">map</span><span class="container">(</span><span class="variable">lines</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="function">find_coincidences</span><span class="container">(</span><span class="operator">&amp;</span><span class="number">1</span><span class="operator">,</span> <span class="variable">html_file</span><span class="container">)</span><span class="container">)</span> 
-    <span class="comment"># Check elements for future results</span> 
-    <span class="comment"># Save results in list of tuples</span> 
-    <span class="comment"># write_results(html_file, results)</span> 
   <span class="reserved_word">end</span> 
  
   <span class="comment"># Main function to put together  all of the html doc with results</span> 
@@ -54,9 +60,9 @@
  
     <span class="variable">formatted_results</span> <span class="operator">=</span> 
       <span class="module">Enum</span><span class="operator">.</span><span class="function">reduce</span><span class="container">(</span><span class="variable">results</span><span class="operator">,</span> <span class="string">""</span><span class="operator">,</span> <span class="variable">fn</span> <span class="container">[</span><span class="variable">token</span><span class="operator">,</span> <span class="variable">value</span><span class="container">]</span><span class="operator">,</span> <span class="variable">acc</span> <span class="operator">-</span><span class="operator">&gt;</span> 
-        <span class="variable">if</span> <span class="variable">token</span> <span class="operator">=</span><span class="operator">=</span> <span class="string">"space"</span> <span class="reserved_word">do</span> 
+        <span class="reserved_word">if</span> <span class="variable">token</span> <span class="operator">=</span><span class="operator">=</span> <span class="string">"space"</span> <span class="reserved_word">do</span> 
           <span class="variable">acc</span> <span class="operator"><></span> <span class="string">" "</span> 
-        <span class="variable">else</span> 
+        <span class="reserved_word">else</span> 
           <span class="variable">acc</span> <span class="operator"><></span> <span class="string">"<span class=\"#{token}\">#{value}</span>"</span> 
         <span class="reserved_word">end</span> 
       <span class="reserved_word">end</span><span class="container">)</span> 
@@ -74,7 +80,7 @@
     <span class="operator">&lt;</span><span class="variable">head</span><span class="operator">&gt;</span> 
       <span class="operator">&lt;</span><span class="variable">meta</span> <span class="variable">charset</span><span class="operator">=</span><span class="string">"UTF-8"</span><span class="operator">&gt;</span> 
       <span class="operator">&lt;</span><span class="variable">meta</span> <span class="variable">name</span><span class="operator">=</span><span class="string">"viewport" content="width=device-width, initial-scale=1.0"</span><span class="operator">&gt;</span> 
-      <span class="operator">&lt;</span><span class="variable">link</span> <span class="variable">rel</span><span class="operator">=</span><span class="string">"stylesheet" href="style.css"</span><span class="operator">&gt;</span> 
+      <span class="operator">&lt;</span><span class="variable">link</span> <span class="variable">rel</span><span class="operator">=</span><span class="string">"stylesheet" href="CSS/style.css"</span><span class="operator">&gt;</span> 
       <span class="operator">&lt;</span><span class="variable">title</span><span class="operator">&gt;</span><span class="module">Resultados</span><span class="operator">&lt;</span><span class="operator">/</span><span class="variable">title</span><span class="operator">&gt;</span> 
     <span class="operator">&lt;</span><span class="operator">/</span><span class="variable">head</span><span class="operator">&gt;</span> 
     <span class="operator">&lt;</span><span class="variable">body</span><span class="operator">&gt;</span> 
@@ -129,7 +135,8 @@
   <span class="comment"># --------------------------------------------------------------------------------------------</span> 
  
   <span class="reserved_word">def</span> <span class="function">is_reserved_word</span><span class="container">(</span><span class="variable">string</span><span class="operator">,</span> <span class="variable">results</span><span class="operator">,</span> <span class="variable">html_file</span><span class="container">)</span> <span class="reserved_word">do</span> 
-    <span class="variable">coincidence</span> <span class="operator">=</span> <span class="module">Regex</span><span class="operator">.</span><span class="function">run</span><span class="container">(</span><span class="regular_expression">~r/^(defmodule|defp|def|do|end|false|true|cond|case)/</span><span class="operator">,</span> <span class="variable">string</span><span class="container">)</span> 
+    <span class="variable">coincidence</span> <span class="operator">=</span> 
+      <span class="module">Regex</span><span class="operator">.</span><span class="function">run</span><span class="container">(</span><span class="regular_expression">~r/^(defmodule|defp|def|do|end|false|true|cond|case|if|else|nil)/</span><span class="operator">,</span> <span class="variable">string</span><span class="container">)</span> 
  
     <span class="reserved_word">cond</span> <span class="reserved_word">do</span> 
       <span class="variable">coincidence</span> <span class="operator">-</span><span class="operator">&gt;</span> 
