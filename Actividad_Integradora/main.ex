@@ -8,11 +8,20 @@ defmodule Project do
   # Main Function
   # -----------------------
 
-  def convert_file(file) do
+  def convert_file(input_file) do
+    # Folder where html results will save
+    html_address = "HTML_Results/"
     # Create a new name based on the called file but changed extensions from .ex to .html
-    html_file = String.replace(file, ~r/\.\w+$/, ".html")
+    html_file_name = String.replace(input_file, ~r/\.\w+$/, ".html")
+    # Adds hole address to the file
+    html_file = html_address <> html_file_name
     # Create & Write top html file
     write_html_start(html_file)
+
+    # Folder where needs to be the elixir to read file
+    input_file_folder = "ToReadElxirFiles/"
+    # Concatenates hole address
+    file = input_file_folder <> input_file
 
     read_file(file, html_file)
 
@@ -58,7 +67,7 @@ defmodule Project do
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href="style.css">
+      <link rel="stylesheet" href="CSS/style.css">
       <title>Resultados</title>
     </head>
     <body>
@@ -203,6 +212,27 @@ defmodule Project do
     cond do
       coincidence ->
         results = [["module", hd(coincidence)] | results]
+        new_string = String.split_at(string, String.length(hd(coincidence)))
+        is_reserved_word(elem(new_string, 1), results, html_file)
+
+      string == "" ->
+        write_results(html_file, results)
+
+      true ->
+        is_attribute(string, results, html_file)
+    end
+  end
+
+  # --------------------------------------------------------------------------------------------
+  # Attribute Function
+  # --------------------------------------------------------------------------------------------
+
+  def is_attribute(string, results, html_file) do
+    coincidence = Regex.run(~r/^\@\w*/, string)
+
+    cond do
+      coincidence ->
+        results = [["attribute", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
         is_reserved_word(elem(new_string, 1), results, html_file)
 
