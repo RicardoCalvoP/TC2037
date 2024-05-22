@@ -113,7 +113,8 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_reserved_word(string, results, html_file) do
-    coincidence = Regex.run(~r/^(defmodule|defp|def|do|end|false|true|cond|case|if|else)/, string)
+    coincidence =
+      Regex.run(~r/^(defmodule|defp|def|do|end|false|true|cond|case|if|else|nil)/, string)
 
     cond do
       coincidence ->
