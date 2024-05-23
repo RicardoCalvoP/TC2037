@@ -16,7 +16,7 @@ defmodule Project do
     # Adds hole address to the file
     html_file = html_address <> html_file_name
     # Create & Write top html file
-    write_html_start(html_file)
+    write_html_start(html_file, html_file_name)
 
     # Folder where needs to be the elixir to read file
     input_file_folder = "ToReadElxirFiles/"
@@ -54,13 +54,13 @@ defmodule Project do
         end
       end)
 
-    results_string = "\n" <> formatted_results
+    results_string = formatted_results <> " \n"
 
     File.write!(html_file, results_string, [:append])
   end
 
   # Function to write the beginning of html structure
-  def write_html_start(html_file) do
+  def write_html_start(html_file, name) do
     File.write!(html_file, """
     <!DOCTYPE html>
     <html lang="en">
@@ -68,7 +68,7 @@ defmodule Project do
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="CSS/style.css">
-      <title>Resultados</title>
+      <title>#{name}</title>
     </head>
     <body>
     <pre>
@@ -123,7 +123,10 @@ defmodule Project do
 
   def is_reserved_word(string, results, html_file) do
     coincidence =
-      Regex.run(~r/^(defmodule|defp|def|do|end|false|true|cond|case|if|else|nil)/, string)
+      Regex.run(
+        ~r/^(defmodule|defp|def|do|end|false|true|cond|case|when|if|else|nil)(?=\s)/,
+        string
+      )
 
     cond do
       coincidence ->
@@ -156,6 +159,27 @@ defmodule Project do
         write_results(html_file, results)
 
       true ->
+        is_unused_variable(string, results, html_file)
+    end
+  end
+
+  # --------------------------------------------------------------------------------------------
+  # Unused Variable Function
+  # --------------------------------------------------------------------------------------------
+
+  def is_unused_variable(string, results, html_file) do
+    coincidence = Regex.run(~r/^\_[a-z]\w*(\:+)?/, string)
+
+    cond do
+      coincidence ->
+        results = [["unused_variable", hd(coincidence)] | results]
+        new_string = String.split_at(string, String.length(hd(coincidence)))
+        is_reserved_word(elem(new_string, 1), results, html_file)
+
+      string == "" ->
+        write_results(html_file, results)
+
+      true ->
         is_variable(string, results, html_file)
     end
   end
@@ -165,7 +189,7 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_variable(string, results, html_file) do
-    coincidence = Regex.run(~r/^[a-z]\w*/, string)
+    coincidence = Regex.run(~r/^[a-z]\w*(\:+)?/, string)
 
     cond do
       coincidence ->
