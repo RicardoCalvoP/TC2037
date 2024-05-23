@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="CSS/style.css">
+  <title>04_lists.html</title>
+</head>
+<body>
+<pre>
+<span class="comment"># Basic functions with lists</span>  
+<span class="comment">#</span>  
+<span class="comment"># Gilberto Echeverria</span>  
+<span class="comment"># 2024-03-01</span>  
+  
+<span class="reserved_word">defmodule</span> <span class="module">TecLists</span> <span class="reserved_word">do</span>  
+  
+  <span class="comment"># Function to count the elements in a list</span>  
+  <span class="reserved_word">def</span> <span class="function">size</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_size</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="number">0</span><span class="container">)</span>  
+  
+  <span class="comment"># Using the hd() and tl() functions to split the list</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_size</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="variable">len</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="variable">len</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_size</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="variable">len</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_size</span><span class="container">(</span><span class="function">tl</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="variable">len</span> <span class="operator">+</span> <span class="number">1</span><span class="container">)</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">sum</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_sum</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="number">0</span><span class="container">)</span>  
+  
+  <span class="reserved_word">defp</span> <span class="function">do_sum</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="variable">res</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_sum</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_sum</span><span class="container">(</span><span class="function">tl</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="variable">res</span> <span class="operator">+</span> <span class="function">hd</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="container">)</span>  
+  
+  <span class="comment"># Create a list with the integers from 1 to n</span>  
+  <span class="reserved_word">def</span> <span class="function">make_nums</span><span class="container">(</span><span class="variable">n</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_make_nums_2</span><span class="container">(</span><span class="variable">n</span><span class="operator">,</span> <span class="container">[</span><span class="container">]</span><span class="container">)</span>  
+  
+  <span class="comment"># Using ++ to append new elements into the list</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_make_nums_1</span><span class="container">(</span><span class="number">0</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="variable">res</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_make_nums_1</span><span class="container">(</span><span class="variable">n</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="module">IO</span><span class="operator">.</span><span class="variable">inspect</span> <span class="function">binding</span><span class="container">(</span><span class="container">)</span>  
+    <span class="function">do_make_nums_1</span><span class="container">(</span><span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span><span class="operator">,</span> <span class="container">[</span><span class="variable">n</span><span class="container">]</span> <span class="operator">+</span><span class="operator">+</span> <span class="variable">res</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="comment"># Using the [head | tail] construct to add elements to a list</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_make_nums_2</span><span class="container">(</span><span class="number">0</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="variable">res</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_make_nums_2</span><span class="container">(</span><span class="variable">n</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="comment"># Show the arguments received by the function</span>  
+    <span class="module">IO</span><span class="operator">.</span><span class="variable">inspect</span> <span class="function">binding</span><span class="container">(</span><span class="container">)</span>  
+    <span class="function">do_make_nums_1</span><span class="container">(</span><span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span><span class="operator">,</span> <span class="container">[</span><span class="variable">n</span>  <span class="variable">res</span><span class="container">]</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="comment"># Reverse the order of the elments in a list</span>  
+  <span class="reserved_word">def</span> <span class="function">invert</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_invert</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="container">[</span><span class="container">]</span><span class="container">)</span>  
+  
+  <span class="reserved_word">defp</span> <span class="function">do_invert</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="variable">res</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_invert</span><span class="container">(</span><span class="container">[</span><span class="variable">head</span>  <span class="variable">tail</span><span class="container">]</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_invert</span><span class="container">(</span><span class="variable">tail</span><span class="operator">,</span> <span class="container">[</span><span class="variable">head</span>  <span class="variable">res</span><span class="container">]</span><span class="container">)</span>  
+  
+  <span class="comment"># Put every element in a list into a list of its own</span>  
+  <span class="reserved_word">def</span> <span class="function">enlist</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_enlist</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="container">[</span><span class="container">]</span><span class="container">)</span>  
+  
+  <span class="reserved_word">defp</span> <span class="function">do_enlist</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">invert</span><span class="container">(</span><span class="variable">res</span><span class="container">)</span>  
+  <span class="reserved_word">defp</span> <span class="function">do_enlist</span><span class="container">(</span><span class="container">[</span><span class="variable">head</span>  <span class="variable">tail</span><span class="container">]</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="reserved_word">do</span> <span class="function">do_enlist</span><span class="container">(</span><span class="variable">tail</span><span class="operator">,</span> <span class="container">[</span><span class="container">[</span><span class="variable">head</span><span class="container">]</span>  <span class="variable">res</span><span class="container">]</span><span class="container">)</span>  
+  
+<span class="reserved_word">end</span>  
+</pre>
+</body>
+</html>

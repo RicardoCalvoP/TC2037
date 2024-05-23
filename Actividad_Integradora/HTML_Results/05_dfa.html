@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="CSS/style.css">
+  <title>05_dfa.html</title>
+</head>
+
+<body>
+  <pre>
+<span class="comment"># Basic implementation of Finite Automatons</span>  
+<span class="comment">#</span>  
+<span class="comment"># An Automaton is defined as:</span>  
+<span class="comment"># M = (Q, \Sigma, \delta, F, q_0)</span>  
+<span class="comment">#</span>  
+<span class="comment"># Gilberto Echeverria</span>  
+<span class="comment"># 2024-04-16</span>  
+  
+<span class="reserved_word">defmodule</span> <span class="module">DFA</span> <span class="reserved_word">do</span>  
+  
+  <span class="comment"># The automatas can be defined as variables in IEX</span>  
+  <span class="comment"># auto_exam = {&DFA.delta_contains_db/2, [:q2, :q4], :q0}</span>  
+  <span class="comment"># auto_arithmetic = {&DFA.delta_arithmetic/2, [:int, :float], :start}</span>  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Entry</span> <span class="variable">frunction</span> <span class="variable">to</span> <span class="variable">evaluate</span> <span class="variable">a</span> <span class="variable">string</span> <span class="variable">with</span> <span class="variable">a</span> <span class="variable">given</span> <span class="variable">automata</span>  
+  <span class="module">The</span> <span class="variable">automata</span> <span class="variable">argument</span> <span class="variable">is</span> <span class="variable">expressed</span> <span class="variable">as</span>  
+  <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">q0</span><span class="container">}</span>  
+  <span class="string">"""</span>  
+  <span class="reserved_word">def</span> <span class="function">evaluate_1</span><span class="container">(</span><span class="variable">string</span><span class="operator">,</span> <span class="variable">automata</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="variable">string</span>  
+    <span class="comment"># Split the string into a list of characters</span>  
+    <span class="operator">|></span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
+    <span class="operator">|></span> <span class="function">eval_dfa</span><span class="container">(</span><span class="variable">automata</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Recursive</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">follow</span> <span class="variable">the</span> <span class="variable">state</span> <span class="variable">transitions</span> <span class="variable">for</span> <span class="variable">each</span> <span class="variable">of</span> <span class="variable">the</span> <span class="variable">characters</span> <span class="variable">in</span> <span class="variable">the</span> <span class="variable">list</span>  
+  <span class="module">If</span> <span class="variable">the</span> <span class="variable">final</span> <span class="variable">state</span> <span class="variable">is</span> <span class="variable">in</span> <span class="variable">the</span> <span class="variable">accept</span> <span class="variable">state</span> <span class="variable">list</span><span class="operator">,</span> <span class="variable">the</span> <span class="variable">string</span> <span class="variable">is</span> <span class="variable">accepted</span>  
+  <span class="string">"""</span>  
+  <span class="reserved_word">def</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">}</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="comment">#binding() |> IO.inspect()</span>  
+    <span class="module">Enum</span><span class="operator">.</span><span class="variable">member</span><span class="container">(</span><span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  <span class="reserved_word">def</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="container">[</span><span class="variable">char</span>  <span class="variable">tail</span><span class="container">]</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">}</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="comment">#binding() |> IO.inspect()</span>  
+    <span class="variable">new_state</span> <span class="operator">=</span> <span class="variable">delta</span><span class="operator">.</span><span class="container">(</span><span class="variable">state</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span>  
+    <span class="function">eval_dfa</span><span class="container">(</span><span class="variable">tail</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">new_state</span><span class="container">}</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Transition</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">recognize</span> <span class="variable">strings</span> <span class="variable">that</span> <span class="variable">contain</span> <span class="string">"db" and where "ad"</span> <span class="variable">is</span> <span class="variable">invalid</span>  
+  <span class="module">Valid</span> <span class="variable">states</span> <span class="variable">are</span>  
+  <span class="operator">-</span> <span class="atom">:q2</span>  
+  <span class="operator">-</span> <span class="atom">:q4</span>  
+  <span class="string">"""</span>  
+  <span class="reserved_word">def</span> <span class="function">delta_contains_db</span><span class="container">(</span><span class="variable">state</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="reserved_word">case</span> <span class="variable">state</span> <span class="reserved_word">do</span>  
+      <span class="atom">:q0</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">case</span> <span class="variable">char</span> <span class="reserved_word">do</span>  
+        <span class="string">"a"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q3</span>  
+        <span class="string">"b"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q0</span>  
+        <span class="string">"c"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q0</span>  
+        <span class="string">"d"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q1</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:q1</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">case</span> <span class="variable">char</span> <span class="reserved_word">do</span>  
+        <span class="string">"a"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q3</span>  
+        <span class="string">"b"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q2</span>  
+        <span class="string">"c"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q0</span>  
+        <span class="string">"d"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q1</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:q2</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">case</span> <span class="variable">char</span> <span class="reserved_word">do</span>  
+        <span class="string">"a"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q4</span>  
+        <span class="string">"b"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q2</span>  
+        <span class="string">"c"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q2</span>  
+        <span class="string">"d"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q2</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:q3</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">case</span> <span class="variable">char</span> <span class="reserved_word">do</span>  
+        <span class="string">"a"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q3</span>  
+        <span class="string">"b"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q0</span>  
+        <span class="string">"c"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q0</span>  
+        <span class="string">"d"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q5</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:q4</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">case</span> <span class="variable">char</span> <span class="reserved_word">do</span>  
+        <span class="string">"a"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q4</span>  
+        <span class="string">"b"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q2</span>  
+        <span class="string">"c"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q2</span>  
+        <span class="string">"d"</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q5</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:q5</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:q5</span>  
+    <span class="reserved_word">end</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Transition</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">recognize</span> <span class="variable">valid</span> <span class="variable">arithmetic</span> <span class="variable">expressions</span>  
+  <span class="module">Valid</span> <span class="variable">states</span> <span class="variable">are</span>  
+  <span class="operator">-</span> <span class="atom">:int</span>  
+  <span class="operator">-</span> <span class="atom">:float</span>  
+  <span class="string">"""</span>  
+  <span class="reserved_word">def</span> <span class="function">delta_arithmetic</span><span class="container">(</span><span class="variable">state</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="reserved_word">case</span> <span class="variable">state</span> <span class="reserved_word">do</span>  
+      <span class="atom">:start</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+        <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:sign</span>  
+        <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:int</span>  
+        <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:fail</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:int</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+        <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:int</span>  
+        <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:op</span>  
+        <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span> <span class="string">"."</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:dot</span>  
+        <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:fail</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:dot</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+        <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:float</span>  
+        <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:fail</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:float</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+        <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:float</span>  
+        <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:op</span>  
+        <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:fail</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:op</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+        <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:sign</span>  
+        <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:int</span>  
+        <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:fail</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:sign</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+        <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:int</span>  
+        <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:fail</span>  
+      <span class="reserved_word">end</span>  
+      <span class="atom">:fail</span> <span class="operator">-</span><span class="operator">&gt;</span> <span class="atom">:fail</span>  
+    <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">end</span>  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Helper</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">identify</span> <span class="variable">characters</span> <span class="variable">that</span> <span class="variable">represent</span> <span class="variable">digits</span>  
+  <span class="string">"""</span>  
+  <span class="reserved_word">def</span> <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="string">"0123456789"</span>  
+    <span class="operator">|></span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
+    <span class="operator">|></span> <span class="module">Enum</span><span class="operator">.</span><span class="variable">member</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Helper</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">identify</span> <span class="variable">characters</span> <span class="variable">that</span> <span class="variable">represent</span> <span class="variable">positive</span> <span class="variable">or</span> <span class="variable">negative</span> <span class="variable">signs</span> <span class="variable">for</span> <span class="variable">numbers</span>  
+  <span class="string">"""</span>  
+  <span class="reserved_word">def</span> <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="module">Enum</span><span class="operator">.</span><span class="variable">member</span><span class="container">(</span><span class="container">[</span><span class="string">"+", "-"</span><span class="container">]</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Helper</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">identify</span> <span class="variable">characters</span> <span class="variable">that</span> <span class="variable">represent</span> <span class="variable">arithmetic</span> <span class="variable">operators</span>  
+  <span class="string">"""</span>  
+  <span class="reserved_word">def</span> <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="module">Enum</span><span class="operator">.</span><span class="variable">member</span><span class="container">(</span><span class="container">[</span><span class="string">"+", "-", "*", "/", "%", "^", "="</span><span class="container">]</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+<span class="reserved_word">end</span>  
+</pre>
+</body>
+
+</html>
