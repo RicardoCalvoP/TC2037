@@ -26,28 +26,46 @@ Based on the elixir language the used categories are:
 
 + Reserved words
     - defmodule, defp, def, do, end, false, true, cond, case, if, else, nil.
+    - `~r/^(defmodule|defp|def|do|end|false|true|cond|case|when|if|else|nil)(?=\s)/ `
 + Functions
     - every word started in lowercase followed by a opening parenthesis.
+    - `~r/^[a-z]\w*(\!+)?(?=\()/ `
++ Unused variables
+    - this variables are the ones that exists in a function but is not called
+    - `~r/^\_[a-z]\w*(\d)*?(\:+)?/`
 + Variables
     - every word started in lowercase
+    - `~r/^[a-z]\w*(\d)*?(\:+)?/`
 + Comments
     - everything after a "#" symbol
+    - `~r/^\#.*/`
 + Modules
     - every word started with uppercase
+    - `~r/^[A-Z]\w*(\d)*?/`
++ Attributes
+    - This are based on the attributes of a module
+    - `~r/^\@\w*/`
 + String
     - everything inside quote symbols
+    - `~r/^\".*\"/`
 + Numbers
     - every number 
+    - `~r/^\d+(\.\d+)?/`
 + Operators
     -  +, -, *, /, =, ==, ===, !=, ., ,, |>, ->, &, <>, <, and >.
+    - `~r/^(\+|\-|\*|\/|\=|\==|\===|\!=|\.|\,|\|>|\->|\&|\<>|\<|\>)/`
 + Atoms 
     - every _single_ word after a ":"
+    - `~r/^\:\w+(\d)*?/`
 + Containers
     - (, ), {, }, [, ]
+    - `~r/^[\(\)\{\}\[\]]/`
 + Regular expression 
     - based on the regular expression syntax wrote between "r~/" and "/"
+    - `~r/^\~r.+\//`
 + Spaces
     - captures single spaces and tabs
+    - `~r/^\s/`
 
 ## _Code reasoning_
 

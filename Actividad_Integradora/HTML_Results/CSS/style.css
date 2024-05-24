@@ -17,7 +17,7 @@ body {
 }
 
 .variable {
-    color: rgb(215, 230, 217);
+    color: blanchedalmond;
 }
 
 .comment {
@@ -50,7 +50,7 @@ body {
 }
 
 .container {
-    color: rgba(195, 228, 220, 255);
+    color: greenyellow;
 }
 
 .regular_expression {

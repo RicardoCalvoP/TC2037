@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="CSS/style.css">
   <title>05_dfa.html</title>
 </head>
-
 <body>
-  <pre>
+<pre>
 <span class="comment"># Basic implementation of Finite Automatons</span>  
 <span class="comment">#</span>  
 <span class="comment"># An Automaton is defined as:</span>  
@@ -26,7 +24,7 @@
   
   <span class="attribute">@doc</span> <span class="string">"""</span>  
   <span class="module">Entry</span> <span class="variable">frunction</span> <span class="variable">to</span> <span class="variable">evaluate</span> <span class="variable">a</span> <span class="variable">string</span> <span class="variable">with</span> <span class="variable">a</span> <span class="variable">given</span> <span class="variable">automata</span>  
-  <span class="module">The</span> <span class="variable">automata</span> <span class="variable">argument</span> <span class="variable">is</span> <span class="variable">expressed</span> <span class="variable">as</span>  
+  <span class="module">The</span> <span class="variable">automata</span> <span class="variable">argument</span> <span class="variable">is</span> <span class="variable">expressed</span> <span class="variable">as:</span>  
   <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">q0</span><span class="container">}</span>  
   <span class="string">"""</span>  
   <span class="reserved_word">def</span> <span class="function">evaluate_1</span><span class="container">(</span><span class="variable">string</span><span class="operator">,</span> <span class="variable">automata</span><span class="container">)</span> <span class="reserved_word">do</span>  
@@ -40,7 +38,7 @@
   <span class="module">Recursive</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">follow</span> <span class="variable">the</span> <span class="variable">state</span> <span class="variable">transitions</span> <span class="variable">for</span> <span class="variable">each</span> <span class="variable">of</span> <span class="variable">the</span> <span class="variable">characters</span> <span class="variable">in</span> <span class="variable">the</span> <span class="variable">list</span>  
   <span class="module">If</span> <span class="variable">the</span> <span class="variable">final</span> <span class="variable">state</span> <span class="variable">is</span> <span class="variable">in</span> <span class="variable">the</span> <span class="variable">accept</span> <span class="variable">state</span> <span class="variable">list</span><span class="operator">,</span> <span class="variable">the</span> <span class="variable">string</span> <span class="variable">is</span> <span class="variable">accepted</span>  
   <span class="string">"""</span>  
-  <span class="reserved_word">def</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">}</span><span class="container">)</span> <span class="reserved_word">do</span>  
+  <span class="reserved_word">def</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="container">{</span><span class="unused_variable">_delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">}</span><span class="container">)</span> <span class="reserved_word">do</span>  
     <span class="comment">#binding() |> IO.inspect()</span>  
     <span class="module">Enum</span><span class="operator">.</span><span class="variable">member</span><span class="container">(</span><span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">)</span>  
   <span class="reserved_word">end</span>  
@@ -53,7 +51,7 @@
   
   <span class="attribute">@doc</span> <span class="string">"""</span>  
   <span class="module">Transition</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">recognize</span> <span class="variable">strings</span> <span class="variable">that</span> <span class="variable">contain</span> <span class="string">"db" and where "ad"</span> <span class="variable">is</span> <span class="variable">invalid</span>  
-  <span class="module">Valid</span> <span class="variable">states</span> <span class="variable">are</span>  
+  <span class="module">Valid</span> <span class="variable">states</span> <span class="variable">are:</span>  
   <span class="operator">-</span> <span class="atom">:q2</span>  
   <span class="operator">-</span> <span class="atom">:q4</span>  
   <span class="string">"""</span>  
@@ -95,7 +93,7 @@
   
   <span class="attribute">@doc</span> <span class="string">"""</span>  
   <span class="module">Transition</span> <span class="variable">function</span> <span class="variable">to</span> <span class="variable">recognize</span> <span class="variable">valid</span> <span class="variable">arithmetic</span> <span class="variable">expressions</span>  
-  <span class="module">Valid</span> <span class="variable">states</span> <span class="variable">are</span>  
+  <span class="module">Valid</span> <span class="variable">states</span> <span class="variable">are:</span>  
   <span class="operator">-</span> <span class="atom">:int</span>  
   <span class="operator">-</span> <span class="atom">:float</span>  
   <span class="string">"""</span>  
@@ -161,5 +159,4 @@
 <span class="reserved_word">end</span>  
 </pre>
 </body>
-
 </html>

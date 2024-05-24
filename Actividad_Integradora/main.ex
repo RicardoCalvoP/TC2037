@@ -168,7 +168,7 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_unused_variable(string, results, html_file) do
-    coincidence = Regex.run(~r/^\_[a-z]\w*(\:+)?/, string)
+    coincidence = Regex.run(~r/^\_[a-z]\w*(\d)*?(\:+)?/, string)
 
     cond do
       coincidence ->
@@ -189,7 +189,7 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_variable(string, results, html_file) do
-    coincidence = Regex.run(~r/^[a-z]\w*(\:+)?/, string)
+    coincidence = Regex.run(~r/^[a-z]\w*(\d)*?(\:+)?/, string)
 
     cond do
       coincidence ->
@@ -231,7 +231,7 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_module(string, results, html_file) do
-    coincidence = Regex.run(~r/^[A-Z]\w*/, string)
+    coincidence = Regex.run(~r/^[A-Z]\w*(\d)*?/, string)
 
     cond do
       coincidence ->
@@ -345,7 +345,7 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_atoms(string, results, html_file) do
-    coincidence = Regex.run(~r/^\:\w+/, string)
+    coincidence = Regex.run(~r/^\:\w+(\d)*?/, string)
 
     cond do
       coincidence ->
