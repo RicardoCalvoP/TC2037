@@ -316,7 +316,7 @@ defmodule Project do
 
   def is_operator(string, results, html_file) do
     coincidence =
-      Regex.run(~r/^(\+|\-|\*|\/|\=|\==|\===|\!=|\.|\,|\|>|\->|\&|\<>|\<|\>)/, string)
+      Regex.run(~r/^(\+|\-|\*|\/|\=|==|===|!=|\.|\,|\||\|>|\->|\&|\<>|\<|\>)/, string)
 
     cond do
       coincidence ->

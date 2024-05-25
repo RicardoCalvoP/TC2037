@@ -30,8 +30,8 @@
   <span class="reserved_word">def</span> <span class="function">evaluate_1</span><span class="container">(</span><span class="variable">string</span><span class="operator">,</span> <span class="variable">automata</span><span class="container">)</span> <span class="reserved_word">do</span>  
     <span class="variable">string</span>  
     <span class="comment"># Split the string into a list of characters</span>  
-    <span class="operator">|></span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
-    <span class="operator">|></span> <span class="function">eval_dfa</span><span class="container">(</span><span class="variable">automata</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">&gt;</span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">&gt;</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="variable">automata</span><span class="container">)</span>  
   <span class="reserved_word">end</span>  
   
   <span class="attribute">@doc</span> <span class="string">"""</span>  
@@ -42,7 +42,7 @@
     <span class="comment">#binding() |> IO.inspect()</span>  
     <span class="module">Enum</span><span class="operator">.</span><span class="variable">member</span><span class="container">(</span><span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">)</span>  
   <span class="reserved_word">end</span>  
-  <span class="reserved_word">def</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="container">[</span><span class="variable">char</span>  <span class="variable">tail</span><span class="container">]</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">}</span><span class="container">)</span> <span class="reserved_word">do</span>  
+  <span class="reserved_word">def</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="container">[</span><span class="variable">char</span> <span class="operator">|</span> <span class="variable">tail</span><span class="container">]</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">}</span><span class="container">)</span> <span class="reserved_word">do</span>  
     <span class="comment">#binding() |> IO.inspect()</span>  
     <span class="variable">new_state</span> <span class="operator">=</span> <span class="variable">delta</span><span class="operator">.</span><span class="container">(</span><span class="variable">state</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span>  
     <span class="function">eval_dfa</span><span class="container">(</span><span class="variable">tail</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">new_state</span><span class="container">}</span><span class="container">)</span>  
@@ -138,8 +138,8 @@
   <span class="string">"""</span>  
   <span class="reserved_word">def</span> <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
     <span class="string">"0123456789"</span>  
-    <span class="operator">|></span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
-    <span class="operator">|></span> <span class="module">Enum</span><span class="operator">.</span><span class="variable">member</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">&gt;</span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">&gt;</span> <span class="module">Enum</span><span class="operator">.</span><span class="variable">member</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span>  
   <span class="reserved_word">end</span>  
   
   <span class="attribute">@doc</span> <span class="string">"""</span>  

@@ -280,7 +280,7 @@ defmodule Project do
             "<" -> "&lt;"
             ">" -> "&gt;"
             "&" -> "&amp;"
-            other -> other
+            true -> other
           end
 
         results = [["operator", formatted_coincidence] | results]
