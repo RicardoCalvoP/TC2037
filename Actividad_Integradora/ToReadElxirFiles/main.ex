@@ -16,10 +16,10 @@ defmodule Project do
     # Adds hole address to the file
     html_file = html_address <> html_file_name
     # Create & Write top html file
-    write_html_start(html_file)
+    write_html_start(html_file, html_file_name)
 
     # Folder where needs to be the elixir to read file
-    input_file_folder = "ToReadElixirFiles/"
+    input_file_folder = "ToReadElxirFiles/"
     # Concatenates hole address
     file = input_file_folder <> input_file
 
@@ -38,7 +38,25 @@ defmodule Project do
   def read_file(file, html_file) do
     lines = File.stream!(file)
 
-    Enum.map(lines, &find_coincidences(&1, html_file))
+    token_list = [
+      {"reserved_word",
+       ~r/^(defmodule|defp|def|do|end|false|true|cond|case|when|if|else|nil)(?=\s)/},
+      {"function", ~r/^[a-z]\w*(\!+)?(?=\()/},
+      {"unused_variable", ~r/^\_[a-z]\w*(\d)*?(\:+)?/},
+      {"variable", ~r/^[a-z]\w*(\d)*?(\:+)?/},
+      {"comment", ~r/^\#.*/},
+      {"module", ~r/^[A-Z]\w*(\d)*?/},
+      {"attribute", ~r/^\@\w*/},
+      {"string", ~r/^\".*\"/},
+      {"number", ~r/^\d+(\.\d+)?/},
+      {"operator", ~r/^(\+|\-|\*|\/|\=|==|===|!=|\.|\,|\||\|>|\->|\&|\<>|\<|\>)/},
+      {"atom", ~r/^\:\w+(\d)*?/},
+      {"container", ~r/^[\(\)\{\}\[\]]/},
+      {"regular_expression", ~r/^\~r.+\//},
+      {"space", ~r/^\s/}
+    ]
+
+    Enum.map(lines, &find_coincidences(token_list, token_list, [], html_file, &1))
   end
 
   # Main function to put together  all of the html doc with results
@@ -54,13 +72,13 @@ defmodule Project do
         end
       end)
 
-    results_string = "\n" <> formatted_results
+    results_string = formatted_results <> " \n"
 
     File.write!(html_file, results_string, [:append])
   end
 
   # Function to write the beginning of html structure
-  def write_html_start(html_file) do
+  def write_html_start(html_file, name) do
     File.write!(html_file, """
     <!DOCTYPE html>
     <html lang="en">
@@ -68,7 +86,7 @@ defmodule Project do
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="CSS/style.css">
-      <title>Resultados</title>
+      <title>#{name}</title>
     </head>
     <body>
     <pre>
@@ -92,9 +110,38 @@ defmodule Project do
   # Finding coincidences  Functions
   # --------------------------------
 
-  def find_coincidences(line, html_file) do
-    results = []
-    is_reserved_word(line, results, html_file)
+  def find_coincidences(_index, _token_list, results, html_file, ""),
+    do: write_results(html_file, results)
+
+  def find_coincidences(
+        [{token, regex} | tail],
+        token_list,
+        results,
+        html_file,
+        string
+      ) do
+    coincidence = Regex.run(regex, string)
+
+    cond do
+      coincidence ->
+        cond do
+          token == "operator" ->
+            coincidence =
+              case hd(coincidence) do
+                "<" -> "&lt;"
+                ">" -> "&gt;"
+                "&" -> "&amp;"
+                other -> other
+              end
+        end
+
+        results = [[token, hd(coincidence)] | results]
+        new_string = String.split_at(string, String.length(hd(coincidence)))
+        find_coincidences(token_list, token_list, results, html_file, elem(new_string, 1))
+
+      true ->
+        find_coincidences(tail, token_list, results, html_file, string)
+    end
   end
 
   # -----------------------
@@ -123,7 +170,10 @@ defmodule Project do
 
   def is_reserved_word(string, results, html_file) do
     coincidence =
-      Regex.run(~r/^(defmodule|defp|def|do|end|false|true|cond|case|if|else|nil)/, string)
+      Regex.run(
+        ~r/^(defmodule|defp|def|do|end|false|true|cond|case|when|if|else|nil)(?=\s)/,
+        string
+      )
 
     cond do
       coincidence ->
@@ -156,6 +206,27 @@ defmodule Project do
         write_results(html_file, results)
 
       true ->
+        is_unused_variable(string, results, html_file)
+    end
+  end
+
+  # --------------------------------------------------------------------------------------------
+  # Unused Variable Function
+  # --------------------------------------------------------------------------------------------
+
+  def is_unused_variable(string, results, html_file) do
+    coincidence = Regex.run(~r/^\_[a-z]\w*(\d)*?(\:+)?/, string)
+
+    cond do
+      coincidence ->
+        results = [["unused_variable", hd(coincidence)] | results]
+        new_string = String.split_at(string, String.length(hd(coincidence)))
+        is_reserved_word(elem(new_string, 1), results, html_file)
+
+      string == "" ->
+        write_results(html_file, results)
+
+      true ->
         is_variable(string, results, html_file)
     end
   end
@@ -165,7 +236,7 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_variable(string, results, html_file) do
-    coincidence = Regex.run(~r/^[a-z]\w*/, string)
+    coincidence = Regex.run(~r/^[a-z]\w*(\d)*?(\:+)?/, string)
 
     cond do
       coincidence ->
@@ -207,11 +278,32 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_module(string, results, html_file) do
-    coincidence = Regex.run(~r/^[A-Z]\w*/, string)
+    coincidence = Regex.run(~r/^[A-Z]\w*(\d)*?/, string)
 
     cond do
       coincidence ->
         results = [["module", hd(coincidence)] | results]
+        new_string = String.split_at(string, String.length(hd(coincidence)))
+        is_reserved_word(elem(new_string, 1), results, html_file)
+
+      string == "" ->
+        write_results(html_file, results)
+
+      true ->
+        is_attribute(string, results, html_file)
+    end
+  end
+
+  # --------------------------------------------------------------------------------------------
+  # Attribute Function
+  # --------------------------------------------------------------------------------------------
+
+  def is_attribute(string, results, html_file) do
+    coincidence = Regex.run(~r/^\@\w*/, string)
+
+    cond do
+      coincidence ->
+        results = [["attribute", hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
         is_reserved_word(elem(new_string, 1), results, html_file)
 
@@ -271,7 +363,7 @@ defmodule Project do
 
   def is_operator(string, results, html_file) do
     coincidence =
-      Regex.run(~r/^(\+|\-|\*|\/|\=|\==|\===|\!=|\.|\,|\|>|\->|\&|\<>|\<|\>)/, string)
+      Regex.run(~r/^(\+|\-|\*|\/|\=|==|===|!=|\.|\,|\||\|>|\->|\&|\<>|\<|\>)/, string)
 
     cond do
       coincidence ->
@@ -280,7 +372,7 @@ defmodule Project do
             "<" -> "&lt;"
             ">" -> "&gt;"
             "&" -> "&amp;"
-            true -> other
+            other -> other
           end
 
         results = [["operator", formatted_coincidence] | results]
@@ -300,7 +392,7 @@ defmodule Project do
   # --------------------------------------------------------------------------------------------
 
   def is_atoms(string, results, html_file) do
-    coincidence = Regex.run(~r/^\:\w+/, string)
+    coincidence = Regex.run(~r/^\:\w+(\d)*?/, string)
 
     cond do
       coincidence ->
