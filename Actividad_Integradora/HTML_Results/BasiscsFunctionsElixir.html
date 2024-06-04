@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="CSS/style.css">
+  <title>BasiscsFunctionsElixir.html</title>
+</head>
+<body>
+<pre>
+<span class="comment"># Simple functions in Elixir</span>  
+<span class="comment">#</span>  
+<span class="comment"># Ricardo Calvo</span>  
+<span class="comment"># 27/02/2024</span>  
+  
+<span class="comment"># Functions MOST be WRITTEN in LOWERCASE</span>  
+  
+<span class="reserved_word">defmodule</span> <span class="module">Basiscs</span> <span class="reserved_word">do</span>  
+  
+    <span class="reserved_word">def</span> <span class="function">suma</span><span class="container">(</span><span class="variable">a</span><span class="operator">,</span><span class="variable">b</span><span class="container">)</span> <span class="reserved_word">do</span>  
+        <span class="variable">a</span> <span class="operator">+</span> <span class="variable">b</span>  
+    <span class="reserved_word">end</span>  
+  
+    <span class="reserved_word">def</span> <span class="function">farh_cel</span><span class="container">(</span><span class="variable">f</span><span class="container">)</span> <span class="reserved_word">do</span>  
+        <span class="container">(</span><span class="variable">f</span><span class="operator">-</span><span class="number">32</span><span class="container">)</span><span class="operator">*</span><span class="container">(</span><span class="number">5</span><span class="operator">/</span><span class="number">9</span><span class="container">)</span>  
+    <span class="reserved_word">end</span>  
+  
+    <span class="reserved_word">def</span> <span class="function">cel_farh</span><span class="container">(</span><span class="variable">c</span><span class="container">)</span> <span class="reserved_word">do</span>  
+        <span class="container">(</span><span class="variable">c</span><span class="operator">*</span><span class="number">9</span><span class="operator">/</span><span class="number">5</span><span class="container">)</span><span class="operator">+</span><span class="number">32</span>  
+    <span class="reserved_word">end</span>  
+  
+<span class="reserved_word">end</span>  
+  
+<span class="module">IO</span><span class="operator">.</span><span class="function">puts</span><span class="container">(</span><span class="module">Basiscs</span><span class="operator">.</span><span class="function">suma</span><span class="container">(</span><span class="number">4</span><span class="operator">,</span><span class="number">2</span><span class="container">)</span><span class="container">)</span>  
+<span class="module">IO</span><span class="operator">.</span><span class="function">puts</span><span class="container">(</span><span class="module">Basiscs</span><span class="operator">.</span><span class="function">farh_cel</span><span class="container">(</span><span class="number">122</span><span class="container">)</span><span class="container">)</span>  
+<span class="module">IO</span><span class="operator">.</span><span class="function">puts</span><span class="container">(</span><span class="module">Basiscs</span><span class="operator">.</span><span class="function">cel_farh</span><span class="container">(</span><span class="number">50</span><span class="container">)</span><span class="container">)</span>  
+  
+<span class="module">IO</span><span class="operator">.</span><span class="function">puts</span><span class="container">(</span><span class="module">Basiscs</span><span class="operator">.</span><span class="function">farh_cel</span><span class="container">(</span><span class="module">Basiscs</span><span class="operator">.</span><span class="function">cel_farh</span><span class="container">(</span><span class="number">36.4</span><span class="container">)</span><span class="container">)</span><span class="container">)</span>  
+  
+<span class="comment"># Pipe operator</span>  
+<span class="comment"># Take the previos result as the first argument of a functions</span>  
+  
+<span class="number">83.12</span>  
+<span class="operator">|</span><span class="operator">></span> <span class="module">Basiscs</span><span class="operator">.</span><span class="function">farh_cel</span><span class="container">(</span><span class="container">)</span>  
+<span class="operator">|</span><span class="operator">></span> <span class="module">Basiscs</span><span class="operator">.</span><span class="function">cel_farh</span><span class="container">(</span><span class="container">)</span>  
+<span class="operator">|</span><span class="operator">></span> <span class="module">IO</span><span class="operator">.</span><span class="variable">puts</span>  
+  
+<span class="comment"># Lists</span>  
+  
+<span class="reserved_word">defmodule</span> <span class="module">TecList</span> <span class="reserved_word">do</span>  
+  
+    <span class="reserved_word">def</span> <span class="function">size</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="function">do_size</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="number">0</span><span class="container">)</span>  
+    <span class="reserved_word">defp</span> <span class="function">do_size</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="variable">len</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="variable">len</span>  
+    <span class="reserved_word">defp</span> <span class="function">do_size</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="variable">len</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="function">do_size</span><span class="container">(</span><span class="function">tl</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="variable">len</span> <span class="operator">+</span> <span class="number">1</span><span class="container">)</span>  
+  
+    <span class="reserved_word">def</span> <span class="function">sum</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="function">sum_list</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span><span class="number">0</span><span class="container">)</span>  
+      
+    <span class="reserved_word">defp</span> <span class="function">sum_list</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="variable">res</span>  
+    <span class="reserved_word">defp</span> <span class="function">sum_list</span><span class="container">(</span><span class="variable">list</span><span class="operator">,</span> <span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="function">sum_list</span><span class="container">(</span><span class="function">tl</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="operator">,</span> <span class="variable">res</span> <span class="operator">+</span> <span class="function">hd</span><span class="container">(</span><span class="variable">list</span><span class="container">)</span><span class="container">)</span>  
+  
+    <span class="reserved_word">def</span> <span class="function">make_nums</span><span class="container">(</span><span class="variable">n</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="function">do_make_nums</span><span class="container">(</span><span class="variable">n</span><span class="operator">,</span><span class="container">[</span><span class="container">]</span><span class="container">)</span>  
+  
+    <span class="reserved_word">defp</span> <span class="function">do_make_nums</span><span class="container">(</span><span class="number">0</span><span class="operator">,</span><span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="variable">res</span>  
+    <span class="reserved_word">defp</span> <span class="function">do_make_nums</span><span class="container">(</span><span class="variable">n</span><span class="operator">,</span><span class="variable">res</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="function">do_make_nums</span><span class="container">(</span><span class="variable">n</span><span class="operator">-</span><span class="number">1</span><span class="operator">,</span> <span class="container">[</span><span class="variable">n</span> <span class="operator">|</span> <span class="variable">res</span><span class="container">]</span><span class="container">)</span>  
+<span class="reserved_word">end</span>  
+</pre>
+</body>
+</html>

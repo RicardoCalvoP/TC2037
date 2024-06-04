@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="CSS/style.css">
+  <title>07_file_io.html</title>
+</head>
+<body>
+<pre>
+<span class="comment"># Reading and writing into files with Elixir</span>  
+<span class="comment"># Also using regular expressions</span>  
+<span class="comment">#</span>  
+<span class="comment"># Gilberto Echeverria</span>  
+<span class="comment"># 2024-04-30</span>  
+  
+<span class="reserved_word">defmodule</span> <span class="module">Tfile</span> <span class="reserved_word">do</span>  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Function</span> <span class="variable">to</span> <span class="variable">extract</span> <span class="variable">all</span> <span class="variable">the</span> <span class="variable">emails</span> <span class="variable">found</span> <span class="variable">in</span> <span class="variable">a</span> <span class="variable">text</span> <span class="variable">file</span><span class="operator">.</span>  
+  <span class="module">Will</span> <span class="variable">scan</span> <span class="variable">every</span> <span class="variable">line</span> <span class="variable">individually</span><span class="operator">.</span>  
+  <span class="module">Arguments</span><span class="unknown">:</span>  
+  <span class="operator">-</span> <span class="variable">in_filename</span> <span class="unknown">:</span> <span class="variable">the</span> <span class="variable">name</span> <span class="variable">of</span> <span class="variable">the</span> <span class="variable">file</span> <span class="variable">to</span> <span class="variable">read</span>  
+  <span class="operator">-</span> <span class="variable">out_filename</span> <span class="unknown">:</span> <span class="variable">the</span> <span class="variable">name</span> <span class="variable">of</span> <span class="variable">a</span> <span class="variable">new</span> <span class="variable">file</span> <span class="variable">where</span> <span class="variable">emails</span> <span class="variable">will</span> <span class="variable">be</span> <span class="variable">stores</span><span class="operator">,</span> <span class="variable">one</span> <span class="variable">in</span> <span class="variable">each</span> <span class="variable">line</span>  
+  <span class="module">Returns</span><span class="unknown">:</span>  
+  <span class="operator">-</span> <span class="atom">:ok</span>  
+  <span class="operator">-</span> <span class="module">As</span> <span class="variable">a</span> <span class="variable">side</span> <span class="variable">effect</span><span class="operator">,</span> <span class="variable">a</span> <span class="variable">new</span> <span class="variable">file</span> <span class="variable">is</span> <span class="variable">created</span>  
+  <span class="string">"""</span>  
+  <span class="attribute">@spec</span> <span class="function">get_emails</span><span class="container">(</span><span class="module">String</span><span class="operator">.</span><span class="function">t</span><span class="container">(</span><span class="container">)</span><span class="operator">,</span> <span class="module">String</span><span class="operator">.</span><span class="function">t</span><span class="container">(</span><span class="container">)</span><span class="container">)</span> <span class="operator">::</span> <span class="atom">:ok</span>  
+  <span class="reserved_word">def</span> <span class="function">get_emails</span><span class="container">(</span><span class="variable">in_filename</span><span class="operator">,</span> <span class="variable">out_filename</span><span class="container">)</span> <span class="reserved_word">do</span>  
+  
+    <span class="comment"># Prepare the file to write the results</span>  
+    <span class="container">{</span><span class="atom">:ok</span><span class="operator">,</span> <span class="variable">out_fd</span><span class="container">}</span> <span class="operator">=</span> <span class="module">File</span><span class="operator">.</span><span class="function">open</span><span class="container">(</span><span class="variable">out_filename</span><span class="operator">,</span> <span class="container">[</span><span class="atom">:write</span><span class="container">]</span><span class="container">)</span>  
+  
+    <span class="comment"># Start with the filename</span>  
+    <span class="variable">in_filename</span>  
+    <span class="comment"># Open the file to read it line by line</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">File</span><span class="operator">.</span><span class="function">stream!</span><span class="container">(</span><span class="container">)</span>  
+    <span class="comment"># Scan each line to find email addresses</span>  
+    <span class="comment">#|> Enum.map(&Regex.scan(~r/\w+@\w+\.\w{2,4}/, &1))</span>  
+    <span class="comment"># Another syntax for the anonymous function to the map</span>  
+    <span class="comment">#|> Enum.map(fn line -> Regex.scan(~r/\w+@\w+\.\w{2,4}/, line) end)</span>  
+    <span class="comment"># Using a named function instead</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">Enum</span><span class="operator">.</span><span class="function">map</span><span class="container">(</span><span class="operator">&</span><span class="function">find_email</span><span class="container">(</span><span class="operator">&</span><span class="number">1</span><span class="container">)</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">IO</span><span class="operator">.</span><span class="function">inspect</span><span class="container">(</span><span class="variable">label:</span> <span class="string">"After scan"</span><span class="container">)</span>  
+    <span class="comment"># Eliminate lines without an email</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">Enum</span><span class="operator">.</span><span class="function">filter</span><span class="container">(</span><span class="operator">&</span><span class="container">(</span><span class="operator">&</span><span class="number">1</span> <span class="operator">!=</span> <span class="container">[</span><span class="container">]</span><span class="container">)</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">IO</span><span class="operator">.</span><span class="function">inspect</span><span class="container">(</span><span class="variable">label:</span> <span class="string">"After filter"</span><span class="container">)</span>  
+    <span class="comment"># Remove the lists containing the emails</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">Enum</span><span class="operator">.</span><span class="function">map</span><span class="container">(</span><span class="operator">&</span><span class="variable">hd</span><span class="operator">/</span><span class="number">1</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">Enum</span><span class="operator">.</span><span class="function">map</span><span class="container">(</span><span class="operator">&</span><span class="variable">hd</span><span class="operator">/</span><span class="number">1</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">IO</span><span class="operator">.</span><span class="function">inspect</span><span class="container">(</span><span class="variable">label:</span> <span class="string">"After getting the heads of the lists"</span><span class="container">)</span>  
+    <span class="comment"># Write each line to the file</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">Enum</span><span class="operator">.</span><span class="function">map</span><span class="container">(</span><span class="operator">&</span><span class="module">IO</span><span class="operator">.</span><span class="function">puts</span><span class="container">(</span><span class="variable">out_fd</span><span class="operator">,</span> <span class="operator">&</span><span class="number">1</span><span class="container">)</span><span class="container">)</span>  
+  
+    <span class="module">File</span><span class="operator">.</span><span class="function">close</span><span class="container">(</span><span class="variable">out_fd</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="attribute">@doc</span> <span class="string">"""</span>  
+  <span class="module">Function</span> <span class="variable">to</span> <span class="variable">look</span> <span class="reserved_word">for</span> <span class="variable">an</span> <span class="variable">email</span> <span class="variable">address</span> <span class="variable">inside</span> <span class="variable">a</span> <span class="variable">string</span>  
+  <span class="module">Arguments</span><span class="unknown">:</span>  
+  <span class="operator">-</span> <span class="variable">line</span> <span class="unknown">:</span> <span class="variable">a</span> <span class="variable">string</span>  
+  <span class="module">Returns</span><span class="unknown">:</span>  
+  <span class="operator">-</span> <span class="module">A</span> <span class="variable">list</span><span class="operator">,</span> <span class="variable">either</span> <span class="variable">empty</span> <span class="reserved_word">if</span> <span class="variable">no</span> <span class="variable">matches</span> <span class="variable">were</span> <span class="variable">found</span><span class="operator">,</span> <span class="variable">or</span> <span class="variable">containing</span> <span class="variable">lists</span> <span class="variable">of</span> <span class="variable">matches</span>  
+  <span class="string">"""</span>  
+  <span class="attribute">@spec</span> <span class="function">find_email</span><span class="container">(</span><span class="module">String</span><span class="operator">.</span><span class="function">t</span><span class="container">(</span><span class="container">)</span><span class="container">)</span> <span class="operator">::</span> <span class="module">List</span>  
+  <span class="reserved_word">def</span> <span class="function">find_email</span><span class="container">(</span><span class="variable">line</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="module">IO</span><span class="operator">.</span><span class="function">inspect</span><span class="container">(</span><span class="variable">line</span><span class="operator">,</span> <span class="variable">label:</span> <span class="string">"Processing line"</span><span class="container">)</span>  
+    <span class="module">Regex</span><span class="operator">.</span><span class="function">scan</span><span class="container">(</span><span class="regular_expression">~r/\w+@\w+\.\w{2,4}/</span><span class="operator">,</span> <span class="variable">line</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+<span class="reserved_word">end</span>  
+  
+<span class="comment"># Code to read a single command line argument</span>  
+<span class="container">[</span><span class="variable">in_filename</span><span class="container">]</span> <span class="operator">=</span> <span class="module">System</span><span class="operator">.</span><span class="function">argv</span><span class="container">(</span><span class="container">)</span>  
+<span class="comment"># Create the name of the output file</span>  
+<span class="comment"># Add the string "-emails" before the file extension</span>  
+<span class="variable">out_filename</span> <span class="operator">=</span> <span class="module">String</span><span class="operator">.</span><span class="function">replace</span><span class="container">(</span><span class="variable">in_filename</span><span class="operator">,</span> <span class="regular_expression">~r/(\.\w+$)/</span><span class="operator">,</span> <span class="string">"-emails\\1"</span><span class="container">)</span>  
+<span class="comment"># Call the function to find emails</span>  
+<span class="module">Tfile</span><span class="operator">.</span><span class="function">get_emails</span><span class="container">(</span><span class="variable">in_filename</span><span class="operator">,</span> <span class="variable">out_filename</span><span class="container">)</span>  
+  
+<span class="comment"># Now the program can be called as:</span>  
+<span class="comment"># elixir 07_file_io.exs loren_emails.txt</span>  
+</pre>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="CSS/style.css">
+  <title>Act_3_2.html</title>
+</head>
+<body>
+<pre>
+<span class="comment"># Activity 3.2 Programming a DFA</span>  
+  
+<span class="comment"># Ricardo Calvo</span>  
+<span class="comment"># 04/2024</span>  
+  
+<span class="reserved_word">defmodule</span> <span class="module">Hw</span><span class="operator">.</span><span class="module">TokenList</span> <span class="reserved_word">do</span>  
+  <span class="reserved_word">def</span> <span class="function">arithmetic_lexer</span><span class="container">(</span><span class="variable">string</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="variable">string</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="function">eval_dfa</span><span class="container">(</span>  
+      <span class="container">{</span><span class="operator">&</span><span class="module">Hw</span><span class="operator">.</span><span class="module">TokenList</span><span class="operator">.</span><span class="variable">delta_valid_number</span><span class="operator">/</span><span class="number">2</span><span class="operator">,</span> <span class="container">[</span><span class="atom">:int</span><span class="operator">,</span> <span class="atom">:float</span><span class="operator">,</span> <span class="atom">:exp</span><span class="operator">,</span> <span class="atom">:var</span><span class="operator">,</span> <span class="atom">:close_par</span><span class="container">]</span><span class="operator">,</span> <span class="atom">:start</span><span class="container">}</span><span class="operator">,</span>  
+      <span class="container">[</span><span class="container">]</span><span class="operator">,</span>  
+      <span class="container">[</span><span class="container">]</span>  
+    <span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="container">[</span><span class="container">]</span><span class="operator">,</span> <span class="container">{</span><span class="unused_variable">_delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">}</span><span class="operator">,</span> <span class="variable">tokens</span><span class="operator">,</span> <span class="variable">entity</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="comment"># binding() |> IO.inspect()</span>  
+  
+    <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+      <span class="module">Enum</span><span class="operator">.</span><span class="function">member?</span><span class="container">(</span><span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="variable">rev_entity</span> <span class="operator">=</span> <span class="module">Enum</span><span class="operator">.</span><span class="function">reverse</span><span class="container">(</span><span class="variable">entity</span><span class="container">)</span>  
+  
+        <span class="variable">string_entity</span> <span class="operator">=</span> <span class="module">Enum</span><span class="operator">.</span><span class="function">join</span><span class="container">(</span><span class="variable">rev_entity</span><span class="container">)</span>  
+        <span class="module">Enum</span><span class="operator">.</span><span class="function">reverse</span><span class="container">(</span><span class="container">[</span><span class="container">{</span><span class="variable">state</span><span class="operator">,</span> <span class="variable">string_entity</span><span class="container">}</span> <span class="operator">|</span> <span class="variable">tokens</span><span class="container">]</span><span class="container">)</span>  
+  
+      <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">false</span>  
+    <span class="reserved_word">end</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">eval_dfa</span><span class="container">(</span><span class="container">[</span><span class="variable">char</span> <span class="operator">|</span> <span class="variable">tail</span><span class="container">]</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">state</span><span class="container">}</span><span class="operator">,</span> <span class="variable">tokens</span><span class="operator">,</span> <span class="variable">entity</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="comment"># binding() |> IO.inspect()</span>  
+    <span class="container">[</span><span class="variable">new_state</span><span class="operator">,</span> <span class="variable">found</span><span class="container">]</span> <span class="operator">=</span> <span class="variable">delta</span><span class="operator">.</span><span class="container">(</span><span class="variable">state</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span>  
+  
+    <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+      <span class="variable">found</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="variable">rev_entity</span> <span class="operator">=</span> <span class="module">Enum</span><span class="operator">.</span><span class="function">reverse</span><span class="container">(</span><span class="variable">entity</span><span class="container">)</span>  
+  
+        <span class="variable">string_entity</span> <span class="operator">=</span> <span class="module">Enum</span><span class="operator">.</span><span class="function">join</span><span class="container">(</span><span class="variable">rev_entity</span><span class="container">)</span>  
+        <span class="function">eval_dfa</span><span class="container">(</span><span class="variable">tail</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">new_state</span><span class="container">}</span><span class="operator">,</span> <span class="container">[</span><span class="container">{</span><span class="variable">found</span><span class="operator">,</span> <span class="variable">string_entity</span><span class="container">}</span> <span class="operator">|</span> <span class="variable">tokens</span><span class="container">]</span><span class="operator">,</span> <span class="container">[</span><span class="variable">char</span><span class="container">]</span><span class="container">)</span>  
+  
+      <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span> <span class="string">" "</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="function">eval_dfa</span><span class="container">(</span><span class="variable">tail</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">new_state</span><span class="container">}</span><span class="operator">,</span> <span class="variable">tokens</span><span class="operator">,</span> <span class="variable">entity</span><span class="container">)</span>  
+  
+      <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="function">eval_dfa</span><span class="container">(</span><span class="variable">tail</span><span class="operator">,</span> <span class="container">{</span><span class="variable">delta</span><span class="operator">,</span> <span class="variable">accept</span><span class="operator">,</span> <span class="variable">new_state</span><span class="container">}</span><span class="operator">,</span> <span class="variable">tokens</span><span class="operator">,</span> <span class="container">[</span><span class="variable">char</span> <span class="operator">|</span> <span class="variable">entity</span><span class="container">]</span><span class="container">)</span>  
+    <span class="reserved_word">end</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="comment"># Automaton Function</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">delta_valid_number</span><span class="container">(</span><span class="variable">state</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="reserved_word">case</span> <span class="variable">state</span> <span class="reserved_word">do</span>  
+      <span class="atom">:start</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_var</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:var</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:sign</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:int</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:start</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">=</span> <span class="string">"("</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:open</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:var</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_var</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:var</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:var</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:op</span><span class="operator">,</span> <span class="atom">:var</span><span class="container">]</span>  
+          <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:space</span><span class="operator">,</span> <span class="atom">:var</span><span class="container">]</span>  
+          <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">=</span> <span class="string">"="</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:asign</span><span class="operator">,</span> <span class="atom">:var</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:asign</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_var</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:var</span><span class="operator">,</span> <span class="atom">:asign</span><span class="container">]</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:int</span><span class="operator">,</span> <span class="atom">:asign</span><span class="container">]</span>  
+          <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:sign</span><span class="operator">,</span> <span class="atom">:asign</span><span class="container">]</span>  
+          <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:asign</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:sign</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:int</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:sign</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:op</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_var</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:var</span><span class="operator">,</span> <span class="atom">:op</span><span class="container">]</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:int</span><span class="operator">,</span> <span class="atom">:op</span><span class="container">]</span>  
+          <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:sign</span><span class="operator">,</span> <span class="atom">:op</span><span class="container">]</span>  
+          <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:space_op</span><span class="operator">,</span> <span class="atom">:op</span><span class="container">]</span>  
+          <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">=</span> <span class="string">"("</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:open</span><span class="operator">,</span> <span class="atom">:op</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:int</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:int</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_power</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:pow</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:op</span><span class="operator">,</span> <span class="atom">:int</span><span class="container">]</span>  
+          <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:space</span><span class="operator">,</span> <span class="atom">:int</span><span class="container">]</span>  
+          <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">=</span> <span class="string">")"</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:close_par</span><span class="operator">,</span> <span class="atom">:int</span><span class="container">]</span>  
+          <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">=</span> <span class="string">"."</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:dot</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:dot</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:float</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:float</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:float</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:op</span><span class="operator">,</span> <span class="atom">:float</span><span class="container">]</span>  
+          <span class="function">is_power</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:pow</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:space</span><span class="operator">,</span> <span class="atom">:float</span><span class="container">]</span>  
+          <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">=</span> <span class="string">")"</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:close_par</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:pow</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:exp</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:pow_sign</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:pow_sign</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:exp</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:exp</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:exp</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:op</span><span class="operator">,</span> <span class="atom">:exp</span><span class="container">]</span>  
+          <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:space</span><span class="operator">,</span> <span class="atom">:exp</span><span class="container">]</span>  
+          <span class="variable">char</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">=</span> <span class="string">")"</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:close_par</span><span class="operator">,</span> <span class="atom">:exp</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:open</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:int</span><span class="operator">,</span> <span class="atom">:open_par</span><span class="container">]</span>  
+          <span class="function">is_var</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:var</span><span class="operator">,</span> <span class="atom">:open_par</span><span class="container">]</span>  
+          <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:sign</span><span class="operator">,</span> <span class="atom">:open_par</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:close_par</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:op</span><span class="operator">,</span> <span class="atom">:close_par</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:space</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:op</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:space_op</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+          <span class="function">is_var</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:var</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:int</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:sign</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+          <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+        <span class="reserved_word">end</span>  
+  
+      <span class="atom">:fail</span> <span class="operator">-</span><span class="operator">></span>  
+        <span class="container">[</span><span class="atom">:fail</span><span class="operator">,</span> <span class="variable">false</span><span class="container">]</span>  
+    <span class="reserved_word">end</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="comment"># -----------------------</span>  
+  <span class="comment"># Defining rule Functions</span>  
+  <span class="comment"># -----------------------</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">is_var</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">Enum</span><span class="operator">.</span><span class="function">member?</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">is_digit</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="string">"0123456789"</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">Enum</span><span class="operator">.</span><span class="function">member?</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">is_sign</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="module">Enum</span><span class="operator">.</span><span class="function">member?</span><span class="container">(</span><span class="container">[</span><span class="string">"+", "-"</span><span class="container">]</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">is_operator</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="string">"+-*/%"</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">String</span><span class="operator">.</span><span class="function">graphemes</span><span class="container">(</span><span class="container">)</span>  
+    <span class="operator">|</span><span class="operator">></span> <span class="module">Enum</span><span class="operator">.</span><span class="function">member?</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">is_power</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="module">Enum</span><span class="operator">.</span><span class="function">member?</span><span class="container">(</span><span class="container">[</span><span class="string">"E", "e"</span><span class="container">]</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">is_space</span><span class="container">(</span><span class="variable">char</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="module">Enum</span><span class="operator">.</span><span class="function">member?</span><span class="container">(</span><span class="container">[</span><span class="string">" "</span><span class="container">]</span><span class="operator">,</span> <span class="variable">char</span><span class="container">)</span>  
+  <span class="reserved_word">end</span>  
+<span class="reserved_word">end</span>  
+</pre>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="CSS/style.css">
+  <title>03_recursion.html</title>
+</head>
+<body>
+<pre>
+<span class="comment"># Functions with recursion in Elixir</span>  
+<span class="comment">#</span>  
+<span class="comment"># Gilberto Echeverria</span>  
+<span class="comment"># 2024-03-01</span>  
+  
+<span class="reserved_word">defmodule</span> <span class="module">Recur</span> <span class="reserved_word">do</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">fact_1</span><span class="container">(</span><span class="variable">n</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="reserved_word">if</span> <span class="variable">n</span> <span class="operator">></span> <span class="number">0</span> <span class="reserved_word">do</span>  
+      <span class="reserved_word">if</span> <span class="variable">n</span> <span class="operator">=</span><span class="operator">=</span> <span class="number">0</span> <span class="reserved_word">do</span>  
+        <span class="number">1</span>  
+      <span class="reserved_word">else</span>  
+        <span class="variable">n</span> <span class="operator">*</span> <span class="function">fact_1</span><span class="container">(</span><span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span><span class="container">)</span>  
+      <span class="reserved_word">end</span>  
+    <span class="reserved_word">else</span>  
+      <span class="atom">:error</span>  
+    <span class="reserved_word">end</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="reserved_word">def</span> <span class="function">fact_2</span><span class="container">(</span><span class="variable">n</span><span class="container">)</span> <span class="reserved_word">do</span>  
+    <span class="reserved_word">cond</span> <span class="reserved_word">do</span>  
+      <span class="variable">n</span> <span class="operator"><</span> <span class="number">0</span> <span class="operator">-</span><span class="operator">></span> <span class="atom">:error</span>  
+      <span class="variable">n</span> <span class="operator">=</span><span class="operator">=</span> <span class="number">0</span> <span class="operator">-</span><span class="operator">></span> <span class="number">1</span>  
+      <span class="reserved_word">true</span> <span class="operator">-</span><span class="operator">></span> <span class="variable">n</span> <span class="operator">*</span> <span class="function">fact_2</span><span class="container">(</span><span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span><span class="container">)</span>  
+    <span class="reserved_word">end</span>  
+  <span class="reserved_word">end</span>  
+  
+  <span class="comment"># Using pattern matching and guards</span>  
+  <span class="comment"># to create different versions of the function</span>  
+  <span class="reserved_word">def</span> <span class="function">fact_3</span><span class="container">(</span><span class="variable">n</span><span class="container">)</span> <span class="reserved_word">when</span> <span class="variable">n</span> <span class="operator"><</span> <span class="number">0</span><span class="operator">,</span> <span class="variable">do:</span> <span class="atom">:error</span>  
+  <span class="reserved_word">def</span> <span class="function">fact_3</span><span class="container">(</span><span class="number">0</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="number">1</span>  
+  <span class="reserved_word">def</span> <span class="function">fact_3</span><span class="container">(</span><span class="variable">n</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="variable">n</span> <span class="operator">*</span> <span class="function">fact_3</span><span class="container">(</span><span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span><span class="container">)</span>  
+  
+  <span class="comment"># Public function that calls the tail recursion version</span>  
+  <span class="reserved_word">def</span> <span class="function">fact_4</span><span class="container">(</span><span class="variable">n</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="function">fact_4</span><span class="container">(</span><span class="variable">n</span><span class="operator">,</span> <span class="number">1</span><span class="container">)</span>  
+  
+  <span class="comment"># Private functions to use tail recursion</span>  
+  <span class="reserved_word">defp</span> <span class="function">fact_4</span><span class="container">(</span><span class="variable">n</span><span class="operator">,</span> <span class="unused_variable">_a</span><span class="container">)</span> <span class="reserved_word">when</span> <span class="variable">n</span> <span class="operator"><</span> <span class="number">0</span><span class="operator">,</span> <span class="variable">do:</span> <span class="atom">:error</span>  
+  <span class="reserved_word">defp</span> <span class="function">fact_4</span><span class="container">(</span><span class="number">0</span><span class="operator">,</span> <span class="variable">a</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="variable">a</span>  
+  <span class="reserved_word">defp</span> <span class="function">fact_4</span><span class="container">(</span><span class="variable">n</span><span class="operator">,</span> <span class="variable">a</span><span class="container">)</span><span class="operator">,</span> <span class="variable">do:</span> <span class="function">fact_4</span><span class="container">(</span><span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span><span class="operator">,</span> <span class="variable">a</span> <span class="operator">*</span> <span class="variable">n</span><span class="container">)</span>  
+  
+<span class="reserved_word">end</span>  
+</pre>
+</body>
+</html>
