@@ -1,38 +1,34 @@
 # Project.convert_file("main.ex")
 # Project.convert_folder("ToReadElxirFiles")
+# Project.convert_folder_parallel("ToReadElxirFiles")
 
 defmodule Project do
-  # Converts a single file into a new HTML file
-  def convert_file(input_file) do
-    html_address = "HTML_Results/"
-    File.mkdir_p!(html_address)
-
-    html_file_name = String.replace(input_file, ~r/\.\w+$/, ".html")
-    html_file = Path.join(html_address, html_file_name)
-    write_html_start(html_file, html_file_name)
-
-    input_file_folder = "ToReadElxirFiles/"
-    file = Path.join(input_file_folder, input_file)
-
-    read_file(file, html_file)
-    write_html_end(html_file)
-  end
-
   # Converts all Elixir files in a folder into different HTML files
-  def convert_folder(folder) do
-    case File.ls(folder) do
-      {:ok, files} ->
-        files
-        |> Enum.map(&Task.async(fn -> do_convert_file(&1, folder) end))
-        |> Enum.map(&Task.await(&1))
 
-      {:error, reason} ->
-        IO.puts("Error reading folder: #{reason}")
-    end
+  # Using threads
+  def convert_folder_parallel(folder, threads \\ 8) do
+    File.ls!(folder)
+    |> Enum.map(&Task.async(fn -> convert_file(&1, folder) end))
+    |> Enum.map(&Task.await(&1, :infinity))
   end
 
-  defp do_convert_file(folder_file, folder) do
+  # Not using threads
+  def convert_folder(folder) do
+    File.ls!(folder)
+    |> Enum.map(&convert_file(&1, folder))
+  end
+
+  # Checking time
+
+  def calc_time(function, args) do
+    {time, function} = :timer.tc(function, args)
+    time / 1_000_000
+  end
+
+  # Converts a single file into a new HTML file
+  def convert_file(folder_file, folder \\ "ToReadElxirFiles/") do
     # Folder where HTML results will be saved
+    # IO.inspect("Proccesing file: #{folder_file}")
     html_address = "HTML_Results/"
     # Ensure HTML results folder exists
     File.mkdir_p!(html_address)
@@ -43,12 +39,9 @@ defmodule Project do
     html_file = Path.join(html_address, html_file_name)
     # Create & write top HTML file
     write_html_start(html_file, html_file_name)
-
     # Full path to the input file
     file = Path.join(folder, folder_file)
-
     read_file(file, html_file)
-
     # Write closure tags and close file
     write_html_end(html_file)
   end
@@ -76,10 +69,21 @@ defmodule Project do
       {"unknown", ~r/^[^\s]+/}
     ]
 
-    Enum.each(lines, &find_coincidences(token_list, token_list, [], html_file, &1))
+    results = Enum.map(lines, &find_coincidences(token_list, token_list, [], &1))
+    {:ok, out_fd} = File.open(html_file, [:write, :append])
+
+    separate_results(out_fd, results)
+    File.close(out_fd)
   end
 
-  def write_results(html_file, results) do
+  def separate_results(out_fd, [head | tail]) do
+    write_results(out_fd, head)
+    separate_results(out_fd, tail)
+  end
+
+  def separate_results(out_fd, []), do: :ok
+
+  def write_results(out_fd, results) do
     results = Enum.reverse(results)
 
     formatted_results =
@@ -91,8 +95,7 @@ defmodule Project do
         end
       end)
 
-    results_string = formatted_results <> " \n"
-    File.write!(html_file, results_string, [:append])
+    IO.puts(out_fd, formatted_results)
   end
 
   def write_html_start(html_file, name) do
@@ -126,7 +129,6 @@ defmodule Project do
         [{token, regex} | tail],
         token_list,
         results,
-        html_file,
         string
       ) do
     coincidence = Regex.run(regex, string)
@@ -149,13 +151,13 @@ defmodule Project do
 
         results = [[token, hd(coincidence)] | results]
         new_string = String.split_at(string, String.length(hd(coincidence)))
-        find_coincidences(token_list, token_list, results, html_file, elem(new_string, 1))
+        find_coincidences(token_list, token_list, results, elem(new_string, 1))
 
       string == "" ->
-        write_results(html_file, results)
+        results
 
       true ->
-        find_coincidences(tail, token_list, results, html_file, string)
+        find_coincidences(tail, token_list, results, string)
     end
   end
 end
