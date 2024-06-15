@@ -1,7 +1,7 @@
 # Syntax highlighter 
 
 ### Ricardo Alfredo Calvo Pérez
-### 20/25/2024
+### 20/5/2024
 
 ### TC2037 - Computers methods implementation
 
@@ -15,10 +15,7 @@
 6. [Reflexion](#reflexion)
 7. [BigO complexity](#bigo-complexity)
 8. [Ethical implications](#ethical-implications)
-9. [Alternative Tools](#alternative-tools)
-10. [Comparison](#comparison)
-11. [New technologies](#new-technologies)
-12. [Final Reflexion](#final-reflexion)
+
 ## _Summary_
 
 In this project, I'm to create a code processor capable of reading Elixir code files and converting them into HTML files. The purpose of this transformation is to provide a syntax-highlighted representation of the Elixir code for better readability and presentation in a web browser based on different types of reserved words and tokens.
@@ -101,31 +98,3 @@ Understanding how the code works we can say that depending on how many lines the
 The development of advanced code processing tools offers significant benefits in terms of efficiency and accuracy, but it also comes with a set of ethical responsibilities. It is crucial for developers to carefully consider these implications and work to mitigate potential risks, ensuring that their technology is used safely, fairly, and responsibly for the benefit of society as a whole.
 
 Some unethical usage could be using this technology to find sensitive information like names, directions, date births, phone numbers, mails or passwords of people who hasn't given you their  concent.
-
-## _Alternative Tools_
-
-
-As mentioned before, we used threading to optimize the program's performance. This technique divides the program into smaller tasks that run concurrently on different CPU cores. Each thread processes a specific file, distributing the workload efficiently and maximizing system resource usage.
-
-Threading is particularly useful for intensive I/O operations, such as reading and converting multiple code files to HTML. By allowing multiple threads to work simultaneously, we can significantly reduce the total processing time. Instead of sequentially processing files, threading enables multiple files to be processed at once, speeding up the overall process.
-
-Additionally, using threads improves efficiency in multi-core environments. Each available core is assigned to a thread handling a file, ensuring effective utilization of all system resources. This not only boosts the program's performance but also enhances scalability, as adding more cores can further increase processing speed.
-
-## _Comparison_
-
-Using our function `Project.calc_time("function")`, we measured the time in seconds that our program takes to process files in a folder using the lexer. With a folder containing 8 files, the function using threads has an average completion time of 1.5 seconds. This is a noticeable improvement compared to the function that doesn't use threads, which takes an average of 5.5 seconds. The significant difference in performance highlights the efficiency of threading in speeding up the processing time.
-
-## _New technologies_
-
-The appearance of new technologies varies greatly across different areas, driven by the unique demands and innovations within each field.
-
-New tools and frameworks appear frequently, often driven by the need for more efficient coding practices, better performance, and enhanced user experiences, just as we did by using more cores that our computer has to make the program faster. Tech industry is constantly evolving, with new front-end and back-end technologies, frameworks, and tools appearing frequently. This rapid pace is driven by the need for responsive, user-friendly web applications and the constant push for better performance and security.
-
-## _Final reflexion_
-This new technology is helpful for everyone since, as mentioned before, it is more user-friendly and developer-friendly. It allows programs to run faster and makes development easier in many ways.
-
-For users, new technologies often translate into more intuitive and responsive interfaces. For example, modern web development frameworks like React and Angular enable the creation of dynamic and interactive web applications that enhance user engagement and satisfaction.
-
-For developers, these technologies provide powerful tools and libraries that simplify complex tasks. For instance, multithreading libraries and frameworks enable developers to write concurrent and parallel code more easily, improving the performance of applications and reducing development time.
-
-In conclution, new technologies provide significant benefits by improving user experience, streamlining development processes, enhancing performance, and facilitating the maintenance and scalability of applications. These advancements contribute to creating more robust, efficient, and user-friendly software solutions.
