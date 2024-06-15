@@ -1,6 +1,6 @@
 # Context-free grammars
 
-Name: 
+Name: Ricardo Calvo
 
 ## Grammar definitions
 
@@ -17,16 +17,19 @@ Consider all the requirements for the construction according to the language. Fo
                     <statement>
                     <return>
 
+     | <function> ::= def <name> () :
+                    <statement>
+                    <return>
+
 
 <name> ::= <string>
 
-<params> ::= <params>, <param>
+<params> ::= <param>, <params>
                         |   <param>
-                        |   <lambda>
+
 
 <return> ::= <return>
                     |   <return> <statement>
-                    |   <lambda>
 
 
 ```
@@ -46,7 +49,6 @@ PARAM ::= NAME
 
 RETURN ::= 'return' [STATEMENT]
 
-STATEMENT ::= (STATEMENT | STATEMENT [{,STATEMENT}])
 
 
 ```
@@ -55,12 +57,12 @@ STATEMENT ::= (STATEMENT | STATEMENT [{,STATEMENT}])
 
 ```xml
 <module> ::= defmodule <name> do
-                        <contents>
+                        <functions>
                     end
 
 <name>: <UpperCase><Digit>
-<contents> ::= <content>
-                    | <function> <contents>
+<functions> ::= <function>
+                    | <function> <functions>
 <UpperCase>::= A | B | C | ... | X | Y | Z
 <Digit>::= a | b | c | . .. | x | y | z | 0 | 1 | ... | 9 <Digit>
 ```
@@ -69,30 +71,38 @@ STATEMENT ::= (STATEMENT | STATEMENT [{,STATEMENT}])
 
 ```bash
 MODULE ::= 'defmodule' NAME 'do' 
-                        {CONTENTS}
+                        {FUNCTIONS}
                     'end'
 ```
 
 ### BNF Elixir functions
 
 ```xml
-<function> ::= def <name> (<params>) do <content> end
-                        |   def <name> (<params>), do: <contents> end
+<function> ::= <def> <name> (<params>) do <content> end
+                        |   <def> <name> (<params>), do: <contents> 
+                        |   <def> <name> (<params>) when <condition> do <contents> end
+                        |   <def> <name> () do <contents> end
+                        |   <def> <name> (), do: <contents> 
 
+<def> ::= def | defp 
 <name> ::= <lowercase><digit>
 <lowercase> ::= a | b | c | . .. | x | y | z
 <digit> ::= <digit> a | b | c | . .. | x | y | z | A | B | C | ... | X | Y | Z | 0 | 1 | ... | 9 
 <content> ::= <action>
 <contents> ::= <contents><content>
                     |   <content>
+<condition> ::= <function>
+                | <comparison>
+                
 
 ```
 
 ### EBNF Elixir functions
 
 ```bash
-FUNCTION ::= 'def' NAME '(' [PARAMS] ')' 'do' {CONTENTS} 'end'
-            | 'def' NAME '(' [PARAMS] ')' ',' 'do' ':' CONTENT
+FUNCTION ::= 'def'['p'] NAME '(' [PARAMS] ')' 'do' {CONTENTS} 'end'
+            | 'def'['p'] NAME '(' [PARAMS] ')' ',' 'do' ':' CONTENT
+            | 'def'['p'] NAME '(' [PARAMS] ')' 'when' CONDITION 'do' {CONTENTS} 'end'
 
 NAME ::= LETTER {LETTER | DIGIT | '_'}
 
@@ -102,4 +112,5 @@ PARAM ::= NAME
 
 CONTENTS ::= STATEMENT
 
+CONDITION ::= FUNCTION | COMPARISON
 ```
